@@ -7,7 +7,7 @@ requirejs([
     './level'
 ], function (ResourceManager, PlayerManager, NetworkManager, Level) {
 
-    var game = new Phaser.Game(800, 800, Phaser.AUTO, 'game', {
+    var game = new Phaser.Game(800, 800, Phaser.AUTO, 'game-canvas', {
         preload: preload,
         create: create,
         update: update,
