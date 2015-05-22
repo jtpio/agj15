@@ -30,12 +30,14 @@ requirejs([
 
     function create () {
         game.scale.fullScreenScaleMode = Phaser.ScaleManager.SHOW_ALL;
+        game.stage.backgroundColor = '#FFFFFF';
 
         resourceManager.create();
         networkManager.setupServer(function (gameID) {
             // generate level 1
             level.load(1);
         });
+
     }
 
     function restart () {

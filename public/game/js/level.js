@@ -13,7 +13,7 @@ define([
     };
 
     function buildURL(levelNumber) {
-        return 'http://' + game.serverIP + ':' + game.serverPort + '/player?gameID='+game.gameID+'&level='+levelNumber;
+        return 'http://' + game.serverIP + ':' + game.serverPort + '/player/?gameID='+game.gameID+'&level='+levelNumber;
     }
 
     Level.prototype.load = function (levelNumber) {
@@ -24,11 +24,22 @@ define([
 
         var url = buildURL(levelNumber);
         code.makeCode(url);
-        console.log(url);
 
         grid = code.getData();
 
-        console.log(grid);
+        var graphics = game.add.graphics();
+        graphics.beginFill(0x000000);
+
+        var size = 8;
+
+        grid.forEach(function (row, i) {
+            row.forEach(function (dark, j) {
+                if (dark) {
+                    graphics.drawRect(i * size, j * size , size, size);
+                }
+            });
+        });
+        graphics.endFill();
     };
 
     return Level;
