@@ -24,13 +24,15 @@ define([
 
         var url = buildURL(levelNumber);
         code.makeCode(url);
+        console.log(url);
 
         grid = code.getData();
 
-        var graphics = game.add.graphics();
-        graphics.beginFill(0x000000);
-
         var size = 8;
+        var side = grid.length * size;
+
+        var graphics = game.add.graphics(game.world.centerX - side/2, game.world.centerY - side/2);
+        graphics.beginFill(0xFF0000);
 
         grid.forEach(function (row, i) {
             row.forEach(function (dark, j) {
