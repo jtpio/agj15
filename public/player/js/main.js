@@ -19,7 +19,7 @@ requirejs([
 
     function create () {
         game.scale.fullScreenScaleMode = Phaser.ScaleManager.SHOW_ALL;
-
+        game.stage.backgroundColor = '#0000ff';
     }
 
     function restart () {
