@@ -14,13 +14,17 @@ requirejs([
         render: render
     });
 
-    var resourceManager = new ResourceManager(game);
-    var playerManager = new PlayerManager(game);
-    var networkManager = new NetworkManager(game, playerManager);
-    var level = new Level(game);
-    level.load(1);
+    var resourceManager;
+    var playerManager;
+    var networkManager;
+    var level;
 
     function preload () {
+        resourceManager = new ResourceManager(game);
+        playerManager = new PlayerManager(game);
+        networkManager = new NetworkManager(game, playerManager);
+        level = new Level(game);
+
         resourceManager.preload();
     }
 
@@ -28,7 +32,10 @@ requirejs([
         game.scale.fullScreenScaleMode = Phaser.ScaleManager.SHOW_ALL;
 
         resourceManager.create();
-        networkManager.setupServer();
+        networkManager.setupServer(function (gameID) {
+            // generate level 1
+            level.load(1);
+        });
     }
 
     function restart () {

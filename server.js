@@ -4,6 +4,20 @@ var express = require('express');
 var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
+var os = require('os');
+
+var interfaces = os.networkInterfaces();
+var addresses = [];
+for (var k in interfaces) {
+    for (var k2 in interfaces[k]) {
+        var address = interfaces[k][k2];
+        if (address.family === 'IPv4' && !address.internal) {
+            addresses.push(address.address);
+        }
+    }
+}
+
+var ip = addresses.shift();
 
 app.use(express.static(__dirname + '/public'));
 
@@ -47,7 +61,7 @@ function handleGame (game) {
   });
 
   games[gameID] = game;
-  game.emit('gameID', gameID);
+  game.emit('gameID', { gameID: gameID, serverIP: ip, serverPort: argv.p });
 }
 
 function handlePlayer (player) {

@@ -8,9 +8,12 @@
  * @see <a href="http://www.d-project.com/" target="_blank">http://www.d-project.com/</a>
  * @see <a href="http://jeromeetienne.github.com/jquery-qrcode/" target="_blank">http://jeromeetienne.github.com/jquery-qrcode/</a>
  */
-var QRCode;
 
-(function () {
+define(function () {
+
+
+	var QRCode;
+
 	//---------------------------------------------------------------------
 	// QRCode for JavaScript
 	//
@@ -397,7 +400,7 @@ var QRCode;
 					_oContext.fillStyle = bIsDark ? _htOption.colorDark : _htOption.colorLight;
 					_oContext.fillRect(nLeft, nTop, nWidth, nHeight);
 
-					// 안티 앨리어싱 방지 처리
+					// ì•ˆí‹° ì•¨ë¦¬ì–´ì‹± ë°©ì§€ ì²˜ë¦¬
 					_oContext.strokeRect(
 						Math.floor(nLeft) + 0.5,
 						Math.floor(nTop) + 0.5,
@@ -566,7 +569,7 @@ var QRCode;
 		this._android = _getAndroid();
 		this._el = el;
 		this._oQRCode = null;
-		this._oDrawing = new Drawing(this._el, this._htOption);
+		// this._oDrawing = new Drawing(this._el, this._htOption);
 
 		if (this._htOption.text) {
 			this.makeCode(this._htOption.text);
@@ -583,9 +586,22 @@ var QRCode;
 		this._oQRCode.addData(sText);
 		this._oQRCode.make();
 		this._el.title = sText;
-		this._oDrawing.draw(this._oQRCode);
-		return this._oQRCode;
+		//this._oDrawing.draw(this._oQRCode);
 		//this.makeImage();
+	};
+
+	QRCode.prototype.getData = function () {
+		var data = [];
+		var nCount = this._oQRCode.getModuleCount();
+
+		for (var row = 0; row < nCount; row++) {
+			data.push([]);
+			for (var col = 0; col < nCount; col++) {
+				data[row].push(this._oQRCode.isDark(row, col));
+			}
+		}
+
+		return data;
 	};
 
 	/**
@@ -612,4 +628,7 @@ var QRCode;
 	 * @name QRCode.CorrectLevel
 	 */
 	QRCode.CorrectLevel = QRErrorCorrectLevel;
-})();
+
+	return QRCode;
+
+});

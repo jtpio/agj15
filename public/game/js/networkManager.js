@@ -13,15 +13,20 @@ define([
         playerManager = pm;
     };
 
-    NetworkManager.prototype.setupServer = function () {
+    NetworkManager.prototype.setupServer = function (ready) {
         server = new GameServer('server');
 
         server.addEventListener('newPlayer', function (player) {
             playerManager.add(player);
         });
 
-        server.addEventListener('gameID', function (gameID) {
-            console.log(gameID);
+
+        server.addEventListener('gameID', function (res) {
+            console.log('ready', res.gameID);
+            game.gameID = res.gameID;
+            game.serverIP = res.serverIP;
+            game.serverPort = res.serverPort;
+            return ready();
         });
 
     };
