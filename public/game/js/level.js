@@ -28,7 +28,7 @@ define([
 
         grid = code.getData();
 
-        var size = 8;
+        var size = 16;
         var side = grid.length * size;
 
         var graphics = game.add.graphics(game.world.centerX - side/2, game.world.centerY - side/2);
