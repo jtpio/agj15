@@ -11,6 +11,22 @@ define([
     var grid;
     var xRange = { min: 0, max: 0};
     var yRange = { min: 0, max: 0};
+
+    var bases = {
+        1: {
+            sprite: null,
+            xPos: 0.10,
+            yPos: 0.90,
+            size: 50
+        },
+        2: {
+            sprite: null,
+            xPos: 0.90,
+            yPos: 0.10,
+            size: 50
+        }
+    };
+
     var nbNodes = 5;
     var nodes = [];
     var graph = {};
@@ -23,6 +39,7 @@ define([
         xRange.max = 0.75 * game.world.width + Settings.CODE_SIZE / 2;
         yRange.min = 0.5 * game.world.height - Settings.CODE_SIZE / 2;
         yRange.max = 0.5 * game.world.height + Settings.CODE_SIZE / 2;
+
     };
 
     function buildURL(levelNumber) {
@@ -66,9 +83,30 @@ define([
                 next();
             },
             buildGraph: function (next) {
-                for (var i = 0; i < nbNodes; i++) {
-                    nodes.push(new Node(i, game.rnd.integerInRange(xRange.min, xRange.max), game.rnd.integerInRange(yRange.min, yRange.max)));
-                }
+
+                var nodeID = 0;
+
+                Object.keys(bases).forEach(function (baseID) {
+                    var x = xRange.min + bases[baseID].xPos * (xRange.max - xRange.min);
+                    var y = yRange.min + bases[baseID].yPos * (yRange.max - yRange.min);
+                    var sprite = game.add.sprite(x, y, '1x1');
+                    sprite.scale.setTo(0);
+                    sprite.anchor.set(0.5);
+                    sprite.tint = 0x00ffff;
+                    nodes.push(new Node(nodeID++, x, y, sprite, baseID));
+                });
+
+                var targets = _.sample(tiles.children, nbNodes);
+
+                targets.forEach(function (target) {
+                    var x = target.x;
+                    var y = target.y;
+                    var sprite = game.add.sprite(x, y, '1x1');
+                    sprite.scale.setTo(0);
+                    sprite.anchor.set(0.5);
+                    sprite.tint = 0xff00ff;
+                    nodes.push(new Node(nodeID++, x, y, sprite));
+                });
                 // Construct the graph.
                 // Each node has a maximum of neighbors equal to the number of glyphs - 1
                 var nodesByGlyphID = _.groupBy(nodes, 'glyph');
@@ -105,16 +143,10 @@ define([
                 }, function(err) {
                     next();
                 });
-
-                // console.log(graph);
             },
             spawnNodes: function (next) {
                 // create the sprites for the nodes
                 nodes.forEach(function (node) {
-                    node.sprite = game.add.sprite(node.x, node.y, '1x1');
-                    node.sprite.scale.setTo(0);
-                    node.sprite.anchor.set(0.5);
-                    node.sprite.tint = 0xff00ff;
                     game.add.tween(node.sprite.scale).to({ x: node.size, y: node.size }, 500, Phaser.Easing.Quadratic.InOut, true, 500 * Math.random())
                 });
 
