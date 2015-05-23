@@ -38,6 +38,9 @@ body, html{
 
 .flip-clock-wrapper ul li a div.up div.inn,
 .flip-clock-wrapper ul li a div.down div.inn,
-.flip-clock-dot{
+.flip-clock-wrapper .flip-clock-dot{
 	background: #776A29;
+}
+.flip-clock-wrapper .flip-clock-label{
+	display: none;
 }
