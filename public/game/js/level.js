@@ -58,7 +58,7 @@ define([
         });
 
         for (var i = 0; i < nbNodes; i++) {
-            nodes.push(i, new Node(game.rnd.integerInRange(xRange.min, xRange.max), game.rnd.integerInRange(yRange.min, yRange.max)));
+            nodes.push(new Node(i, game.rnd.integerInRange(xRange.min, xRange.max), game.rnd.integerInRange(yRange.min, yRange.max)));
         }
 
         tiles.children.forEach(function (tile) {
@@ -68,7 +68,6 @@ define([
             game.add.tween(tile).to(nearest, 1000, Phaser.Easing.Quadratic.In, true, 500);
 
         });
-
 
         // Construct the graph.
         // Each node has a maximum of neighbors equal to the number of glyphs - 1
