@@ -76,7 +76,7 @@ requirejs([
             btnToOption(btn1, 1, data);
             btnToOption(btn2, 2, data);
             btnToOption(btn3, 3, data);
-           
+
             bmd.clear();
         });
     }
@@ -88,9 +88,9 @@ requirejs([
     }
     function createButton(index){
         var btn = game.add.button(
-            windowWidth * btnLocations.x[index], 
-            windowHeight * btnLocations.y[index], 
-            'controls', 
+            windowWidth * btnLocations.x[index],
+            windowHeight * btnLocations.y[index],
+            'controls',
             function(){
                 console.log('Moving to '+index);
                 networkManager.getClient().sendCommand('goto', {
@@ -98,10 +98,10 @@ requirejs([
                 });
                 resetButtons();
             },
-            this, 
-            'Phone_Glyph00'+(index+1),
-            'Phone_Glyph00'+(index+1),
-            'Phone_Glyph00'+(index+1)
+            this,
+            'Phone_Glyph00'+(index+1) + '.png',
+            'Phone_Glyph00'+(index+1) + '.png',
+            'Phone_Glyph00'+(index+1) + '.png'
         );
         btn.name = 'btn'+index;
         btn.anchor.setTo(0.5);
@@ -122,12 +122,12 @@ requirejs([
     function optionToBtn(btn, index){
         game.add.tween(btn.scale).to({x:btnScale,y:btnScale}, 250, Phaser.Easing.Quadratic.InOut, true);
         game.add.tween(btn).to(
-            {   
+            {
                 x:windowWidth*btnLocations.x[index],
                 y:windowHeight*btnLocations.y[index]
-            }, 
+            },
             250, Phaser.Easing.Quadratic.InOut, true);
-        
+
     }
     function resetButtons(){
         optionToBtn(btn0, 0);
@@ -153,13 +153,13 @@ requirejs([
         bmd.ctx.stroke();
         bmd.ctx.closePath();
         bmd.render();
-        
+
     }
     function update () {
 
     }
     function render () {
-        
+
     }
 
     function toggleFullScreen() {

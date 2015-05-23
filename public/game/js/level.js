@@ -10,7 +10,7 @@ define([
     var codeColors = [0x0000ff, 0x00ff00, 0xff0000];
     var xRange = { min: 0, max: 0};
     var yRange = { min: 0, max: 0};
-    var nbNodes = 6;
+    var nbNodes = 10;
 
     var bases = {
         0: {
@@ -40,11 +40,15 @@ define([
 
     var Level = function (g) {
         game = g;
-        xRange.min = 0.75 * game.world.width - Settings.CODE_SIZE / 2;
-        xRange.max = 0.75 * game.world.width + Settings.CODE_SIZE / 2;
+        xRange.min = 0.60 * game.world.width - Settings.CODE_SIZE / 2;
+        xRange.max = 0.60 * game.world.width + Settings.CODE_SIZE / 2;
         yRange.min = 0.5 * game.world.height - Settings.CODE_SIZE / 2;
         yRange.max = 0.5 * game.world.height + Settings.CODE_SIZE / 2;
 
+    };
+
+    Level.prototype.getTopLeft = function () {
+        return { x: xRange.min, y: yRange.min };
     };
 
     function buildURL(levelNumber) {
@@ -114,6 +118,13 @@ define([
 
                 var targets = _.sample(tiles.children, nbNodes);
 
+/*                var targets = [
+                    tiles.children[50],
+                    tiles.children[100],
+                    tiles.children[200],
+                    tiles.children[320],
+                ];
+    */
                 targets.forEach(function (target) {
                     var x = target.x;
                     var y = target.y;
@@ -133,7 +144,7 @@ define([
                         });
                         return nearest.id;
                     });
-                    _.remove(graph[node.id], function (n) { return n < 0; });
+                    _.remove(graph[node.id], function (n) { return n === node.id || n < 0; });
                 });
 
                 // self.debug();
@@ -158,7 +169,6 @@ define([
     };
 
     Level.prototype.transition = function (callback) {
-    // create the sprites for the nodes
         nodes.forEach(function (node) {
             game.add.tween(node.sprite.scale).to({ x: node.size, y: node.size }, 500, Phaser.Easing.Quadratic.InOut, true, 500 * Math.random());
         });
@@ -182,32 +192,41 @@ define([
     };
 
     Level.prototype.movePlayer = function (data, callback) {
+        var self = this;
         var p = data.player;
         var glyph = data.glyph;
 
-        console.log(p.currentNode, 'to glyph', glyph);
-
         var candidates = graph[p.currentNode];
-        console.log(graph[p.currentNode]);
-
-        console.log(candidates);
 
         var moveTo = candidates.map(function (c) {
             return nodes[c];
         }).filter(function (n) {
-            console.log(n.glyph);
             return n.glyph === glyph;
-        }).shift();
+        }).pop();
 
-        if (moveTo) {
+        if (moveTo && !p.isMoving) {
+            p.isMoving = true;
             game.add.tween(p.sprite.position).to({ x: moveTo.x, y: moveTo.y }, 250, Phaser.Easing.Quadratic.InOut, true)
                 .onComplete.add(function () {
-                    callback({ node: moveTo });
+                    self.landOnNode(p, moveTo, callback);
                 });
         } else {
             callback({ node: null });
         }
 
+    };
+
+    Level.prototype.landOnNode = function (p, node, callback) {
+        p.currentNode = node.id;
+        p.isMoving = false;
+
+        var res = { node: node.id };
+
+        if (!node.isSolved(p.base)) {
+            res.puzzle = node.difficulty;
+        }
+
+        callback(res);
     };
 
     Level.prototype.debug = function () {

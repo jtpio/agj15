@@ -34,9 +34,7 @@ requirejs([
         game.stage.disableVisibilityChange = true;
 
         game.scale.fullScreenScaleMode = Phaser.ScaleManager.SHOW_ALL;
-        game.stage.backgroundColor = '#FFFFFF';
-        // var background = game.add.sprite(0, 0, 'sprites', 'Background.PNG');
-
+        game.stage.backgroundColor = '#afa03a';
         resourceManager.create();
 
         async.series([

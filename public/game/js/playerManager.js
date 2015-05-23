@@ -17,6 +17,10 @@ define([
     PlayerManager.prototype.loop = function () {
         var self = this;
 
+        var topLeft = level.getTopLeft();
+        console.log(topLeft);
+        game.add.sprite(topLeft.x, topLeft.y, 'sprites', 'Background.png');
+
         async.forever(
             function (nextLoop) {
                 var timer = game.time.create(true);
@@ -110,9 +114,18 @@ define([
                     player: p,
                     glyph: data.glyph
                 }, function (response) {
-                    console.log(response);
+                    if (response.node) {
+                        p.sendCommand('movedTo', response);
+                    }
                 });
             });
+
+            p.addEventListener('puzzleSolved', function (data) {
+                level.markPuzzleAsSolved(data, function () {
+                    // do something
+                });
+            });
+
         });
     };
 
@@ -153,8 +166,6 @@ define([
             player.sprite.destroy();
             delete self.players[netPlayer.id];
         });
-
-        netPlayer.sendCommand('puzzle', ['a','b','c']);
 
         console.log('added player', netPlayer);
     };
