@@ -10,7 +10,8 @@ define([], function () {
 
     ResourceManager.prototype.preload = function() {
         // graphics
-        // game.load.atlas('seacreatures', '../assets/img/seacreatures_json.png', '../assets/img/seacreatures_json.json');
+        game.load.atlasJSONHash('test', '../assets/img/test-spritesheet.png', '../assets/img/test-spritesheet.json');
+        game.load.atlasJSONHash('sprites', '../assets/img/game_spritesheet.png', '../assets/img/game_spritesheet.json');
 
         // audio
         // game.load.audio('hit02', ['assets/sound/hit02.mp3']);
@@ -19,9 +20,7 @@ define([], function () {
     ResourceManager.prototype.create = function() {
         // load the sounds
         // sound.loadSounds('hit02', 1, false);
-        // var octopus = game.add.sprite(330, 100, 'seacreatures');
-        // octopus.animations.add('swim', Phaser.Animation.generateFrameNames('octopus', 0, 24, '', 4), 30, true);
-        // octopus.animations.play('swim');
+
 
         // game.add.tween(octopus).to({ y: 250 }, 4000, Phaser.Easing.Quadratic.InOut, true, 0, 10000, true);
 

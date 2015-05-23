@@ -4,10 +4,11 @@ requirejs([
     './resourceManager',
     './playerManager',
     './networkManager',
-    './level'
-], function (ResourceManager, PlayerManager, NetworkManager, Level) {
+    './level',
+    './settings'
+], function (ResourceManager, PlayerManager, NetworkManager, Level, Settings) {
 
-    var game = new Phaser.Game(800, 800, Phaser.AUTO, 'game-canvas', {
+    var game = new Phaser.Game(Settings.WIDTH, Settings.HEIGHT, Phaser.AUTO, 'game-canvas', {
         preload: preload,
         create: create,
         update: update,
@@ -31,6 +32,7 @@ requirejs([
     function create () {
         game.scale.fullScreenScaleMode = Phaser.ScaleManager.SHOW_ALL;
         game.stage.backgroundColor = '#FFFFFF';
+        // var background = game.add.sprite(0, 0, 'sprites', 'Background');
 
         resourceManager.create();
         networkManager.setupServer(function (gameID) {
