@@ -39,12 +39,12 @@ define([
         this.solved = {};
 	};
 
-	Node.prototype.solve = function (player) {
-		var flag = game.add.sprite(this.x, this.y, 'sprites', (player.base === 1 ? 'Red' : 'Blue') + '001_Flag.png');
+	Node.prototype.solve = function (base) {
+		var flag = game.add.sprite(this.x, this.y, 'sprites', (base === 0 ? 'Red' : 'Blue') + '002_Flag.png');
 		flag.scale.setTo(0);
 		flag.anchor.setTo(0.5);
         game.add.tween(flag.scale).to({ x: 4, y: 4 }, 500, Phaser.Easing.Bounce.InOut, true);
-		this.solved[player] = flag;
+		this.solved[base] = flag;
 	};
 
 	Node.prototype.isSolved = function (player) {

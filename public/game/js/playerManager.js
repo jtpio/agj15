@@ -90,7 +90,6 @@ define([
 
             p.base = i;
             i++;
-            p.sendCommand('init');
             level.positionPlayer(p, function () {
                 callback();
             });
@@ -141,6 +140,7 @@ define([
             if (p.sprite) {
                 p.sprite.destroy();
             }
+            p.sendCommand('init');
         });
     };
 
