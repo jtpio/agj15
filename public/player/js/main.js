@@ -33,7 +33,7 @@ requirejs([
 
     function preload () {
         // Phaser.Canvas.setSmoothingEnabled(game.context, false);
-        game.load.atlasJSONHash('controls', 'sprites/game_spritesheet.png', 'sprites/game_spritesheet.json');
+        game.load.atlasJSONHash('controls', '../assets/img/game_spritesheet.png', '../assets/img/game_spritesheet.json');
     }
 
     function create () {
