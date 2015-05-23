@@ -7,7 +7,7 @@ define([
 ], function (QRCode, Node, Settings) {
 
     var glyphs = Settings.GLYPHS_IDS;
-    var codeColors = [0x0000ff, 0x00ff00, 0xff0000];
+    var codeColors = [0x000066, 0x006600, 0x660000];
     var xRange = { min: 0, max: 0};
     var yRange = { min: 0, max: 0};
     var nbNodes = 10;
