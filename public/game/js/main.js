@@ -4,27 +4,24 @@ requirejs([
     './resourceManager',
     './playerManager',
     './networkManager',
-    './level',
     './settings'
-], function (ResourceManager, PlayerManager, NetworkManager, Level, Settings) {
+], function (ResourceManager, PlayerManager, NetworkManager, Settings) {
 
     var game = new Phaser.Game(Settings.WIDTH, Settings.HEIGHT, Phaser.AUTO, 'game-canvas', {
         preload: preload,
         create: create,
         update: update,
         render: render
-    });
+    }, false, false);
 
     var resourceManager;
     var playerManager;
     var networkManager;
-    var level;
 
     function preload () {
         resourceManager = new ResourceManager(game);
         playerManager = new PlayerManager(game);
         networkManager = new NetworkManager(game, playerManager);
-        level = new Level(game);
 
         resourceManager.preload();
     }
@@ -39,12 +36,8 @@ requirejs([
         async.series([
             function (callback) {
                 networkManager.setupServer(function (gameID) {
-                    // generate level 1
                     callback();
                 });
-            },
-            function (callback) {
-                level.load(1, callback);
             }
         ], function (err, results) {
             console.log('ready');

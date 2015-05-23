@@ -6,11 +6,11 @@ define([
     './settings'
 ], function (QRCode, Node, Settings) {
 
-    var game;
-    var code;
-    var grid;
+    var glyphs = Settings.GLYPHS_IDS;
+    var codeColors = [0x0000ff, 0x00ff00, 0xff0000];
     var xRange = { min: 0, max: 0};
     var yRange = { min: 0, max: 0};
+    var nbNodes = 5;
 
     var bases = {
         1: {
@@ -27,11 +27,13 @@ define([
         }
     };
 
-    var nbNodes = 5;
+    var game;
+
+    var code;
+    var grid;
     var nodes = [];
     var graph = {};
     var tiles = [];
-    var glyphs = Settings.GLYPHS_IDS;
 
     var Level = function (g) {
         game = g;
@@ -46,11 +48,23 @@ define([
         return 'http://' + game.serverIP + ':' + game.serverPort + '/player/?gameID='+game.gameID+'&level='+levelNumber;
     }
 
+    // cleanup
+    Level.prototype.reset = function () {
+        nodes.forEach(function (n) {
+            n.sprite.destroy();
+        });
+        grid = [];
+        nodes = [];
+        graph = {};
+        tiles = [];
+    };
+
     Level.prototype.load = function (levelNumber, loaded) {
+        this.reset();
 
         async.series({
             generateCode: function (next) {
-                code = new QRCode(document.getElementById("game-canvas"), {
+                code = new QRCode(document.getElementById('game-canvas'), {
                     width : Settings.CODE_SIZE,
                     height : Settings.CODE_SIZE
                 });
@@ -65,16 +79,17 @@ define([
                 var grid = code.getData();
                 var side = Settings.CODE_SIZE;
                 var size = Math.floor(side / grid.length);
+                var color = _.sample(codeColors);
 
                 tiles = game.add.group();
-
                 grid.forEach(function (row, i) {
                     row.forEach(function (dark, j) {
                         if (dark) {
                             var tile = game.add.sprite(game.world.centerX - side/4 + i*size, game.world.centerY - side/2 + j*size, '1x1');
-                            tile.scale.setTo(size);
+                            tile.scale.setTo(0);
+                            game.add.tween(tile.scale).to({ x: size, y: size }, 500, Phaser.Easing.Quadratic.InOut, true, 100 * Math.random());
                             tile.anchor.set(0.5);
-                            tile.tint = 0x0000ff;
+                            tile.tint = color;
                             tiles.add(tile);
                         }
                     });
@@ -124,32 +139,37 @@ define([
                 async.each(tiles.children, function (tile, done) {
                     var nearest = _.min(nodes, function (node) {
                         return Math.pow(tile.position.x-node.x, 2) + Math.pow(tile.position.y-node.y, 2);
-                    })
-                    game.add.tween(tile).to(nearest, 1000, Phaser.Easing.Quadratic.InOut, true, 500)
-                    .chain(
-                        game.add.tween(tile).to({ alpha: 0 }, 1000, Phaser.Easing.Quadratic.InOut, true, 500)
-                    ).onComplete.add(function () {
-                        tile.kill();
-                        done();
                     });
+                    tile.nearest = nearest;
+                    done();
                 }, function(err) {
                     next();
                 });
             },
-            spawnNodes: function (next) {
-                // create the sprites for the nodes
-                nodes.forEach(function (node) {
-                    game.add.tween(node.sprite.scale).to({ x: node.size, y: node.size }, 500, Phaser.Easing.Quadratic.InOut, true, 500 * Math.random())
-                });
-
-                next();
-            }
         }, function (err, res) {
             console.log('level generated');
             if (loaded) {
                 return loaded();
             }
 
+        });
+    };
+
+    Level.prototype.transition = function (callback) {
+    // create the sprites for the nodes
+        nodes.forEach(function (node) {
+            game.add.tween(node.sprite.scale).to({ x: node.size, y: node.size }, 500, Phaser.Easing.Quadratic.InOut, true, 500 * Math.random());
+        });
+
+        async.each(tiles.children, function (tile, done) {
+            game.add.tween(tile).to(tile.nearest, 1000, Phaser.Easing.Quadratic.InOut, true)
+            .chain(
+                game.add.tween(tile).to({ alpha: 0 }, 1000, Phaser.Easing.Quadratic.InOut, true)
+            ).onComplete.add(function () {
+                tile.destroy();
+                done();
+            });
+        }, function(err) {
         });
     };
 
