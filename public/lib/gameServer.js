@@ -90,6 +90,14 @@
     this.handlers[type] = undefined;
   };
 
+  PlayerConnection.prototype.removeAllListenersBut = function(exceptions) {
+    for (var type in this.handlers) {
+      if (exceptions.indexOf(type) < 0) {
+        this.handlers[type] = undefined;
+      }
+    }
+  };
+
   PlayerConnection.prototype.removeAllListeners = function() {
     this.handlers = {};
   };

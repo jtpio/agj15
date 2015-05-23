@@ -18,6 +18,8 @@ requirejs([
     var playerManager;
     var networkManager;
 
+    var pauseKey;
+
     function preload () {
         resourceManager = new ResourceManager(game);
         playerManager = new PlayerManager(game);
@@ -43,6 +45,13 @@ requirejs([
             console.log('ready');
             playerManager.loop();
         });
+
+
+        // debug
+        pauseKey = game.input.keyboard.addKey(Phaser.Keyboard.P);
+        pauseKey.onUp.add(function () {
+            game.paused = !game.paused;
+        });
     }
 
     function restart () {
@@ -50,7 +59,6 @@ requirejs([
     }
 
     function update () {
-
     }
 
     function render () {

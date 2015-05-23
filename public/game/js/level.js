@@ -10,16 +10,16 @@ define([
     var codeColors = [0x0000ff, 0x00ff00, 0xff0000];
     var xRange = { min: 0, max: 0};
     var yRange = { min: 0, max: 0};
-    var nbNodes = 5;
+    var nbNodes = 6;
 
     var bases = {
-        1: {
+        0: {
             sprite: null,
             xPos: 0.10,
             yPos: 0.90,
             size: 50
         },
-        2: {
+        1: {
             sprite: null,
             xPos: 0.90,
             yPos: 0.10,
@@ -34,6 +34,9 @@ define([
     var nodes = [];
     var graph = {};
     var tiles = [];
+
+    // debug
+    var debugGraphics;
 
     var Level = function (g) {
         game = g;
@@ -53,6 +56,7 @@ define([
         nodes.forEach(function (n) {
             n.sprite.destroy();
         });
+        if (debugGraphics) debugGraphics.destroy();
         grid = [];
         nodes = [];
         graph = {};
@@ -60,6 +64,7 @@ define([
     };
 
     Level.prototype.load = function (levelNumber, loaded) {
+        var self = this;
         this.reset();
 
         async.series({
@@ -119,22 +124,19 @@ define([
                 var nodesByGlyphID = _.groupBy(nodes, 'glyph');
 
                 nodes.forEach(function (node) {
-                    var glyph = node.glyph;
-                    graph[node.id] = [];
-                    var neighbors = glyphs.filter(function (g) {
-                        return glyph !== g;
-                    }).map(function (glyphID) {
+                    graph[node.id] = glyphs.map(function (glyphID) {
                         if (!nodesByGlyphID[glyphID]) {
-                            return null;
+                            return -1;
                         }
                         var nearest = _.min(nodesByGlyphID[glyphID], function (c) {
                             return Math.pow(c.x-node.x, 2) + Math.pow(c.y-node.y, 2);
                         });
-                        return nearest;
+                        return nearest.id;
                     });
-
-                    graph[node.id] = _.compact(neighbors);
+                    _.remove(graph[node.id], function (n) { return n < 0; });
                 });
+
+                // self.debug();
 
                 async.each(tiles.children, function (tile, done) {
                     var nearest = _.min(nodes, function (node) {
@@ -170,6 +172,53 @@ define([
                 done();
             });
         }, function(err) {
+        });
+    };
+
+    Level.prototype.positionPlayer = function (p) {
+        p.sprite.position.x = nodes[p.base].x;
+        p.sprite.position.y = nodes[p.base].y;
+        p.currentNode = p.base;
+    };
+
+    Level.prototype.movePlayer = function (data, callback) {
+        var p = data.player;
+        var glyph = data.glyph;
+
+        console.log(p.currentNode, 'to glyph', glyph);
+
+        var candidates = graph[p.currentNode];
+        console.log(graph[p.currentNode]);
+
+        console.log(candidates);
+
+        var moveTo = candidates.map(function (c) {
+            return nodes[c];
+        }).filter(function (n) {
+            console.log(n.glyph);
+            return n.glyph === glyph;
+        }).shift();
+
+        if (moveTo) {
+            game.add.tween(p.sprite.position).to({ x: moveTo.x, y: moveTo.y }, 250, Phaser.Easing.Quadratic.InOut, true)
+                .onComplete.add(function () {
+                    callback({ node: moveTo });
+                });
+        } else {
+            callback({ node: null });
+        }
+
+    };
+
+    Level.prototype.debug = function () {
+        debugGraphics = game.add.graphics();
+        debugGraphics.lineStyle(2, 0x000000);
+
+        Object.keys(graph).forEach(function (node) {
+            debugGraphics.moveTo(nodes[node].x, nodes[node].y);
+            graph[node].forEach(function (to) {
+                debugGraphics.lineTo(nodes[to].x, nodes[to].y);
+            });
         });
     };
 

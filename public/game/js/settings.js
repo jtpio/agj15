@@ -8,9 +8,9 @@ define(function () {
 		CODE_SIZE: 700,
 		GLYPHS_IDS: [0, 1, 2, 3],
 		GLYPHS_NAMES: ['', '', '', ''],
-		CONSTRUCTION_TIME: 1000 * 2,
-		TRANSITION_TIME: 1000 * 2,
-		PLAYING_TIME: 1000 * 4
+		CONSTRUCTION_TIME: 1000 * 4,
+		TRANSITION_TIME: 1000 * 3,
+		PLAYING_TIME: 1000 * 40
 	};
 
 	return Settings;
