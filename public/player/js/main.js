@@ -21,6 +21,7 @@ requirejs([
     var puzzle = false;
     var node = 0;
     var words = [];
+    var animating = false;
 
     var check = null, cross = null;
 
