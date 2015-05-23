@@ -22,6 +22,10 @@ body, html{
 
 .flip-clock-wrapper{
 	font-family: pixelArt;
+	position: absolute;
+	z-index: 300;
+	top: 50%;
+  transform: translateY(-50%);
 }
 
 .flip-clock-wrapper ul{
