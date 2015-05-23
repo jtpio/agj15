@@ -29,7 +29,7 @@ define([
         return 'http://' + game.serverIP + ':' + game.serverPort + '/player/?gameID='+game.gameID+'&level='+levelNumber;
     }
 
-    Level.prototype.load = function (levelNumber) {
+    Level.prototype.load = function (levelNumber, loaded) {
 
         async.series({
             generateCode: function (next) {
@@ -69,19 +69,6 @@ define([
                 for (var i = 0; i < nbNodes; i++) {
                     nodes.push(new Node(i, game.rnd.integerInRange(xRange.min, xRange.max), game.rnd.integerInRange(yRange.min, yRange.max)));
                 }
-
-                tiles.children.forEach(function (tile) {
-                    var nearest = _.min(nodes, function (node) {
-                        return Math.pow(tile.position.x-node.x, 2) + Math.pow(tile.position.y-node.y, 2);
-                    })
-                    var moveTween = game.add.tween(tile).to(nearest, 1000, Phaser.Easing.Quadratic.InOut, true, 500);
-                    var fadeOutTween = game.add.tween(tile).to({ alpha: 0 }, 1000, Phaser.Easing.Quadratic.InOut, true, 500);
-                    moveTween.chain(fadeOutTween);
-                    fadeOutTween.onComplete.add(function () {
-                        tile.destroy();
-                    });
-                });
-
                 // Construct the graph.
                 // Each node has a maximum of neighbors equal to the number of glyphs - 1
                 var nodesByGlyphID = _.groupBy(nodes, 'glyph');
@@ -95,8 +82,8 @@ define([
                         if (!nodesByGlyphID[glyphID]) {
                             return null;
                         }
-                        var nearest = _.min(nodesByGlyphID[glyphID], function (next) {
-                            return Math.pow(next.x-node.x, 2) + Math.pow(next.y-node.y, 2);
+                        var nearest = _.min(nodesByGlyphID[glyphID], function (c) {
+                            return Math.pow(c.x-node.x, 2) + Math.pow(c.y-node.y, 2);
                         });
                         return nearest;
                     });
@@ -104,14 +91,42 @@ define([
                     graph[node.id] = _.compact(neighbors);
                 });
 
-                next();
-                // console.log(graph);
-            }
+                async.each(tiles.children, function (tile, done) {
+                    var nearest = _.min(nodes, function (node) {
+                        return Math.pow(tile.position.x-node.x, 2) + Math.pow(tile.position.y-node.y, 2);
+                    })
+                    game.add.tween(tile).to(nearest, 1000, Phaser.Easing.Quadratic.InOut, true, 500)
+                    .chain(
+                        game.add.tween(tile).to({ alpha: 0 }, 1000, Phaser.Easing.Quadratic.InOut, true, 500)
+                    ).onComplete.add(function () {
+                        tile.kill();
+                        done();
+                    });
+                }, function(err) {
+                    next();
+                });
 
+                // console.log(graph);
+            },
+            spawnNodes: function (next) {
+                nodes.forEach(function (node) {
+                    var city = game.add.sprite(node.x, node.y, '1x1');
+                    city.scale.setTo(0);
+                    city.anchor.set(0.5);
+                    city.tint = 0xff00ff;
+                    game.add.tween(city.scale).to({ x: node.size, y: node.size }, 500, Phaser.Easing.Quadratic.InOut, true)
+
+                });
+
+                next();
+            }
         }, function (err, res) {
             console.log('level generated');
-        });
+            if (loaded) {
+                return loaded();
+            }
 
+        });
     };
 
     return Level;
