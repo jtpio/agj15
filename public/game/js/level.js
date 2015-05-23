@@ -72,6 +72,7 @@ define([
         // Construct the graph.
         // Each node has a maximum of neighbors equal to the number of glyphs - 1
         var nodesByGlyphID = _.groupBy(nodes, 'glyph');
+        console.log(nodes);
 
         nodes.forEach(function (node) {
             var glyph = node.glyph;
@@ -79,6 +80,10 @@ define([
             var neighbors = glyphs.filter(function (g) {
                 return glyph !== g;
             }).map(function (glyphID) {
+                if (!nodesByGlyphID[glyphID]) {
+                    return null;
+                }
+
                 var nearest = _.min(nodesByGlyphID[glyphID], function (next) {
                     return Math.pow(next.x-node.x, 2) + Math.pow(next.y-node.y, 2);
                 });

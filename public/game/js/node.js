@@ -10,7 +10,7 @@ define([
 		this.id = id;
 		this.x = x;
 		this.y = y;
-		this.glyph = _.sample(glyphs, 1);
+		this.glyph = _.sample(glyphs);
 		this.sprite = sprite;
 		// this.sprite.anchor.setTo(0.5);
 		// this.sprite.position.x = x;
