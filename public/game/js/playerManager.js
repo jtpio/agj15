@@ -19,7 +19,9 @@ define([
 
         var topLeft = level.getTopLeft();
         console.log(topLeft);
-        game.add.sprite(topLeft.x, topLeft.y, 'sprites', 'Background.png');
+        var background = game.add.sprite(topLeft.x, topLeft.y, 'sprites', 'Background.png');
+
+        background.scale.setTo(1.5);
 
         async.forever(
             function (nextLoop) {
@@ -29,22 +31,19 @@ define([
                 // CONSTRUCTION
                 level.load(1);
 
-                var timeline = 0;
-
-                timer.add(Settings.CONSTRUCTION_TIME, function () {
-                    // TRANSITION
-                    level.transition();
-                    CLOCK.setTime(Math.round(Settings.PLAYING_TIME/1000));
-                    CLOCK.start();
-                });
-
-                timeline += Settings.CONSTRUCTION_TIME;
-                CLOCK.setTime(Math.round(timeline/1000));
+                CLOCK.setTime(Math.round(Settings.TRANSITION_TIME/1000));
                 CLOCK.start();
 
-                timer.add(timeline + Settings.TRANSITION_TIME, function () {
+                timer.add(Settings.TRANSITION_TIME, function () {
+                    CLOCK.setTime(Math.round(Settings.PLAYING_TIME/1000));
+                    CLOCK.start();
                     // GAME STARTS
                     async.series([
+                        function (callback) {
+                            level.transition(function () {
+                               callback();
+                            });
+                        },
                         function (callback) {
                             self.setupPlayers(callback);
                         },
@@ -58,8 +57,7 @@ define([
                     });
                 });
 
-                timeline += Settings.TRANSITION_TIME;
-                timer.add(timeline + Settings.PLAYING_TIME, function () {
+                timer.add(Settings.TRANSITION_TIME + Settings.PLAYING_TIME, function () {
                     // GAME ENDS
                     self.clearListeners();
                     self.removePlayers();
@@ -91,15 +89,11 @@ define([
             p.sprite.animations.play('idle');
 
             p.base = i;
-            level.positionPlayer(p);
             i++;
-
-            game.add.tween(p.sprite).to({ alpha:1 }, 500, Phaser.Easing.Quadratic.InOut, true)
-                .chain(
-                    game.add.tween(p.sprite.scale).to({ x: 2, y: 2 }, 500, Phaser.Easing.Quadratic.InOut, true)
-                ).onComplete.add(function() {
-                    callback();
-                });
+            p.sendCommand('init');
+            level.positionPlayer(p, function () {
+                callback();
+            });
         }, function (err) {
             done();
         });
@@ -109,6 +103,8 @@ define([
         var self = this;
         Object.keys(this.players).forEach(function (pid) {
             var p = self.players[pid];
+
+            // to move somewhere
             p.addEventListener('goto', function (data){
                 level.movePlayer( {
                     player: p,
@@ -120,10 +116,10 @@ define([
                 });
             });
 
+            // puzzle is solved
             p.addEventListener('puzzleSolved', function (data) {
-                level.markPuzzleAsSolved(data, function () {
-                    // do something
-                });
+                if (!data.win) { return; }
+                level.markPuzzleAsSolved({ node: data.node, player: p });
             });
 
         });

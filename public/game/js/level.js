@@ -59,6 +59,9 @@ define([
     Level.prototype.reset = function () {
         nodes.forEach(function (n) {
             n.sprite.destroy();
+            for (var s in n.solved) {
+                n.solved[s].destroy();
+            }
         });
         if (debugGraphics) debugGraphics.destroy();
         grid = [];
@@ -182,13 +185,24 @@ define([
                 done();
             });
         }, function(err) {
+            callback();
         });
     };
 
-    Level.prototype.positionPlayer = function (p) {
-        p.sprite.position.x = nodes[p.base].x;
-        p.sprite.position.y = nodes[p.base].y;
-        p.currentNode = p.base;
+    Level.prototype.positionPlayer = function (p, callback) {
+        p.sprite.alpha = 0;
+
+        game.add.tween(p.sprite.position).to({ x: nodes[p.base].x, y: nodes[p.base].y }, 500, Phaser.Easing.Quadratic.InOut, true)
+            .chain(
+                game.add.tween(p.sprite).to({ alpha:1 }, 1000, Phaser.Easing.Quadratic.InOut, true)
+            )
+            .chain(
+                game.add.tween(p.sprite.scale).to({ x:3, y:3 }, 250, Phaser.Easing.Quadratic.InOut, true)
+            )
+            .onComplete.add(function () {
+                p.currentNode = p.base;
+                callback();
+            });
     };
 
     Level.prototype.movePlayer = function (data, callback) {
@@ -227,6 +241,15 @@ define([
         }
 
         callback(res);
+    };
+
+    Level.prototype.markPuzzleAsSolved = function (data, callback) {
+        var node = data.node;
+        var player = data.player;
+
+        nodes[node].solve(player.base);
+
+        if (callback) callback();
     };
 
     Level.prototype.debug = function () {
