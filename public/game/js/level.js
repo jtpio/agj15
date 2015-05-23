@@ -9,11 +9,17 @@ define([
     var game;
     var code;
     var grid;
-
-    var PADDING = 25;
+    var xRange = { min: 0, max: 0};
+    var yRange = { min: 0, max: 0};
+    var nbNodes = 5;
+    var nodes = [];
 
     var Level = function (g) {
         game = g;
+        xRange.min = game.world.width / 2 - Settings.CODE_SIZE / 2;
+        xRange.max = game.world.width / 2 + Settings.CODE_SIZE / 2;
+        yRange.min = game.world.height / 2 - Settings.CODE_SIZE / 2;
+        yRange.max = game.world.height / 2 + Settings.CODE_SIZE / 2;
     };
 
     function buildURL(levelNumber) {
@@ -49,21 +55,15 @@ define([
             });
         });
 
-        var nodes = [
-            new Node(game.rnd.integerInRange(PADDING, game.world.width - PADDING), game.rnd.integerInRange(PADDING, game.world.height - PADDING)),
-            new Node(game.rnd.integerInRange(PADDING, game.world.width - PADDING), game.rnd.integerInRange(PADDING, game.world.height - PADDING)),
-            new Node(game.rnd.integerInRange(PADDING, game.world.width - PADDING), game.rnd.integerInRange(PADDING, game.world.height - PADDING))
-        ];
-
-        console.log(nodes);
+        for (var i = 0; i < nbNodes; i++) {
+            nodes.push(new Node(game.rnd.integerInRange(xRange.min, xRange.max), game.rnd.integerInRange(yRange.min, yRange.max)));
+        }
 
         tiles.children.forEach(function (tile) {
-
-            var dest = _.min(nodes, function (node) {
+            var nearest = _.min(nodes, function (node) {
                 return Math.pow(tile.position.x-node.x, 2) + Math.pow(tile.position.y-node.y, 2);
             })
-
-            // game.add.tween(tile).to(dest, 5000, Phaser.Easing.Quadratic.In, true, 500);
+            game.add.tween(tile).to(nearest, 1000, Phaser.Easing.Quadratic.In, true, 500);
 
         });
     };

@@ -32,7 +32,7 @@ requirejs([
     function create () {
         game.scale.fullScreenScaleMode = Phaser.ScaleManager.SHOW_ALL;
         game.stage.backgroundColor = '#FFFFFF';
-        // var background = game.add.sprite(0, 0, 'sprites', 'Background');
+        // var background = game.add.sprite(0, 0, 'sprites', 'Background.PNG');
 
         resourceManager.create();
         networkManager.setupServer(function (gameID) {
