@@ -47,7 +47,9 @@ requirejs([
             'controls', 
             function(){
                 console.log('Moving to 0');
-                networkManager.getClient().sendCommand('goto', 0);
+                networkManager.getClient().sendCommand('goto', {
+                    glyph: 0
+                });
             }, 
             this, 
             'Phone_Glyph001.PNG', 
@@ -63,7 +65,9 @@ requirejs([
             'controls', 
             function(){
                 console.log('Moving to 1');
-                networkManager.getClient().sendCommand('goto', 1);
+                networkManager.getClient().sendCommand('goto', {
+                    glyph: 1
+                });
             }, 
             this, 
             'Phone_Glyph002.png', 
@@ -79,7 +83,9 @@ requirejs([
             'controls', 
             function(){
                 console.log('Moving to 2');
-                networkManager.getClient().sendCommand('goto', 2);
+                networkManager.getClient().sendCommand('goto', {
+                    glyph: 2
+                });
             }, 
             this, 
             'Phone_Glyph003.PNG', 
@@ -95,7 +101,9 @@ requirejs([
             'controls', 
             function(){
                 console.log('Moving to 3');
-                networkManager.getClient().sendCommand('goto', 3);
+                networkManager.getClient().sendCommand('goto', {
+                    glyph: 3
+                });
             }, 
             this, 
             'Phone_Glyph004.PNG', 
@@ -104,20 +112,7 @@ requirejs([
         );
         btn3.name = 'btn3';
 
-
         setupUI();
-
-
-        jQuery(window).on('resize', function(){
-            windowWidth = jQuery(window).width();
-            windowHeight = jQuery(window).height();
-
-            btnScale = Math.min(windowWidth / 2, windowHeight / 2) / btnHeight;
-
-            game.renderer.resize(windowWidth, windowHeight);
-
-            setupUI();
-        });
     }
 
     function restart () {
@@ -145,20 +140,14 @@ requirejs([
         // Init buttons
         btn0.anchor.setTo(0.5, 0.5);
         btn0.scale.setTo(btnScale);
-
         
         btn1.anchor.setTo(0.5, 0.5);
         btn1.scale.setTo(btnScale);
-
         
         btn2.anchor.setTo(0.5, 0.5);
         btn2.scale.setTo(btnScale);
 
-
         btn3.anchor.setTo(0.5, 0.5);
         btn3.scale.setTo(btnScale);
     };
-
-
-    jQuery(window).trigger('resize');
 });
