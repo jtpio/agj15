@@ -112,6 +112,37 @@ requirejs([
         );
         btn3.name = 'btn3';
 
+
+        // Drawing lines
+        var bmd = game.add.bitmapData(windowWidth, windowHeight);
+        var color = 'white';
+        
+        bmd.ctx.beginPath();
+        bmd.ctx.lineWidth = "4";
+        bmd.ctx.strokeStyle = color;
+        bmd.ctx.stroke();
+
+        var sprite = game.add.sprite(0, 0, bmd);
+
+        bmd.clear();
+        
+        bmd.ctx.beginPath();
+        bmd.ctx.moveTo(windowWidth / 2, 0);
+        bmd.ctx.lineTo(windowWidth / 2, windowHeight);
+        bmd.ctx.lineWidth = 4;
+        bmd.ctx.stroke();
+        bmd.ctx.closePath();
+        bmd.render();
+
+        bmd.ctx.beginPath();
+        bmd.ctx.moveTo(0, windowHeight / 2);
+        bmd.ctx.lineTo(windowWidth, windowHeight / 2);
+        bmd.ctx.lineWidth = 4;
+        bmd.ctx.stroke();
+        bmd.ctx.closePath();
+        bmd.render();
+        
+
         setupUI();
     }
 
