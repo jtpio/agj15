@@ -1,10 +1,13 @@
 'use strict';
 
-define([], function () {
+define([
+	'./settings'
+], function (Settings) {
 
-	var glyphs = [0, 1, 2, 3];
+	var glyphs = Settings.GLYPHS_IDS;
 
-	var Node = function (x, y, sprite) {
+	var Node = function (id, x, y, sprite) {
+		this.id = id;
 		this.x = x;
 		this.y = y;
 		this.glyph = _.sample(glyphs, 1);

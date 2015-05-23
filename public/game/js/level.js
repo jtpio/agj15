@@ -13,6 +13,8 @@ define([
     var yRange = { min: 0, max: 0};
     var nbNodes = 5;
     var nodes = [];
+    var graph = {};
+    var glyphs = Settings.GLYPHS_IDS;
 
     var Level = function (g) {
         game = g;
@@ -46,17 +48,17 @@ define([
         grid.forEach(function (row, i) {
             row.forEach(function (dark, j) {
                 if (dark) {
-                    var tile = game.add.sprite(game.world.centerX - side/2 + i*size, game.world.centerY - side/2 + j*size, 'test', 'whitepx.png');
+                    var tile = game.add.sprite(game.world.centerX - side/2 + i*size, game.world.centerY - side/2 + j*size, '1x1');
                     tile.scale.setTo(size);
                     tile.anchor.set(0.5);
-                    tile.tint = '#0000FF';
+                    tile.tint = 0x0000ff;
                     tiles.add(tile);
                 }
             });
         });
 
         for (var i = 0; i < nbNodes; i++) {
-            nodes.push(new Node(game.rnd.integerInRange(xRange.min, xRange.max), game.rnd.integerInRange(yRange.min, yRange.max)));
+            nodes.push(i, new Node(game.rnd.integerInRange(xRange.min, xRange.max), game.rnd.integerInRange(yRange.min, yRange.max)));
         }
 
         tiles.children.forEach(function (tile) {
@@ -66,6 +68,28 @@ define([
             game.add.tween(tile).to(nearest, 1000, Phaser.Easing.Quadratic.In, true, 500);
 
         });
+
+
+        // Construct the graph.
+        // Each node has a maximum of neighbors equal to the number of glyphs - 1
+        var nodesByGlyphID = _.groupBy(nodes, 'glyph');
+
+        nodes.forEach(function (node) {
+            var glyph = node.glyph;
+            graph[node.id] = [];
+            var neighbors = glyphs.filter(function (g) {
+                return glyph !== g;
+            }).map(function (glyphID) {
+                var nearest = _.min(nodesByGlyphID[glyphID], function (next) {
+                    return Math.pow(next.x-node.x, 2) + Math.pow(next.y-node.y, 2);
+                });
+                return nearest;
+            });
+
+            graph[node.id] = _.compact(neighbors);
+        });
+
+        // console.log(graph);
     };
 
     return Level;

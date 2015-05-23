@@ -10,8 +10,8 @@ define([], function () {
 
     ResourceManager.prototype.preload = function() {
         // graphics
-        game.load.atlasJSONHash('test', '../assets/img/test-spritesheet.png', '../assets/img/test-spritesheet.json');
         game.load.atlasJSONHash('sprites', '../assets/img/game_spritesheet.png', '../assets/img/game_spritesheet.json');
+        game.load.image('1x1', '../assets/img/1x1.png');
 
         // audio
         // game.load.audio('hit02', ['assets/sound/hit02.mp3']);
