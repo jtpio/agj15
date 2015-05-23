@@ -4,21 +4,29 @@ define([
 	'./settings'
 ], function (Settings) {
 
+	var game;
 	var glyphs = Settings.GLYPHS_IDS;
 	var refSize = 16;
 	var baseSize = 50;
 
-	var Node = function (id, x, y, sprite, base) {
+	var Node = function (g, id, x, y, base) {
+		game = g;
 		this.id = id;
 		this.x = x;
 		this.y = y;
-		this.sprite = sprite;
 		this.glyph = _.sample(glyphs);
-		this.size = Math.round(refSize * Math.sqrt(glyphs.length - this.glyph + 1));
 		if (base) {
-			this.base = base;
-			this.size = baseSize;
+			var color = (base == 1 ? "Red" : "Blue");
+	        this.sprite = game.add.sprite(x, y, 'sprites', color + "001_idle.png");
+	        this.sprite.animations.add('idle', Phaser.Animation.generateFrameNames(color, 1, 4, '_idle.png', 3), 7, true);
+	        this.sprite.animations.play('idle');
+		} else {
+			this.spriteName = 'Glyph00' + (this.glyph+1) +'.PNG';
+			this.sprite = game.add.sprite(x, y, 'sprites', this.spriteName);
 		}
+        this.sprite.anchor.set(0.5);
+        this.sprite.scale.setTo(0);
+        this.size = 2;
 	};
 
 	return Node;

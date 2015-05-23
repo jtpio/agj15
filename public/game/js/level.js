@@ -89,11 +89,7 @@ define([
                 Object.keys(bases).forEach(function (baseID) {
                     var x = xRange.min + bases[baseID].xPos * (xRange.max - xRange.min);
                     var y = yRange.min + bases[baseID].yPos * (yRange.max - yRange.min);
-                    var sprite = game.add.sprite(x, y, '1x1');
-                    sprite.scale.setTo(0);
-                    sprite.anchor.set(0.5);
-                    sprite.tint = 0x00ffff;
-                    nodes.push(new Node(nodeID++, x, y, sprite, baseID));
+                    nodes.push(new Node(game, nodeID++, x, y, baseID));
                 });
 
                 var targets = _.sample(tiles.children, nbNodes);
@@ -101,11 +97,7 @@ define([
                 targets.forEach(function (target) {
                     var x = target.x;
                     var y = target.y;
-                    var sprite = game.add.sprite(x, y, '1x1');
-                    sprite.scale.setTo(0);
-                    sprite.anchor.set(0.5);
-                    sprite.tint = 0xff00ff;
-                    nodes.push(new Node(nodeID++, x, y, sprite));
+                    nodes.push(new Node(game, nodeID++, x, y));
                 });
                 // Construct the graph.
                 // Each node has a maximum of neighbors equal to the number of glyphs - 1
