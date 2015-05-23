@@ -176,6 +176,10 @@ requirejs([
         bmd.clear();
     });
 
+    networkManager.getClient().addEventListener('init', function(){
+        resetButtons();
+    });
+
     function toggleFullScreen() {
         if (game.scale.isFullScreen) {
             game.scale.stopFullScreen();
