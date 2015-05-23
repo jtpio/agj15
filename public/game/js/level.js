@@ -109,13 +109,13 @@ define([
                 // console.log(graph);
             },
             spawnNodes: function (next) {
+                // create the sprites for the nodes
                 nodes.forEach(function (node) {
-                    var city = game.add.sprite(node.x, node.y, '1x1');
-                    city.scale.setTo(0);
-                    city.anchor.set(0.5);
-                    city.tint = 0xff00ff;
-                    game.add.tween(city.scale).to({ x: node.size, y: node.size }, 500, Phaser.Easing.Quadratic.InOut, true)
-
+                    node.sprite = game.add.sprite(node.x, node.y, '1x1');
+                    node.sprite.scale.setTo(0);
+                    node.sprite.anchor.set(0.5);
+                    node.sprite.tint = 0xff00ff;
+                    game.add.tween(node.sprite.scale).to({ x: node.size, y: node.size }, 500, Phaser.Easing.Quadratic.InOut, true, 500 * Math.random())
                 });
 
                 next();
