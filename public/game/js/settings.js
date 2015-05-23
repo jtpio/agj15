@@ -7,7 +7,9 @@ define(function () {
 		HEIGHT: 720,
 		CODE_SIZE: 700,
 		GLYPHS_IDS: [0, 1, 2, 3],
-		GLYPHS_NAMES: ['', '', '', '']
+		GLYPHS_NAMES: ['', '', '', ''],
+		PLAYING_TIME: 1000 * 6,
+		TRANSITION_TIME: 1000 * 1.5
 	};
 
 	return Settings;

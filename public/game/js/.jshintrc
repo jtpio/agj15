@@ -22,6 +22,7 @@
         "_": true
     },
     "predef": [ // Extra globals.
+        "async",
         "define",
         "require",
         "requirejs",

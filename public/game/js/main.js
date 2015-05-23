@@ -35,11 +35,21 @@ requirejs([
         // var background = game.add.sprite(0, 0, 'sprites', 'Background.PNG');
 
         resourceManager.create();
-        networkManager.setupServer(function (gameID) {
-            // generate level 1
-            level.load(1);
-        });
 
+        async.series([
+            function (callback) {
+                networkManager.setupServer(function (gameID) {
+                    // generate level 1
+                    callback();
+                });
+            },
+            function (callback) {
+                level.load(1, callback);
+            }
+        ], function (err, results) {
+            console.log('ready');
+            playerManager.loop();
+        });
     }
 
     function restart () {
