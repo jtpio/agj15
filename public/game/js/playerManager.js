@@ -26,12 +26,18 @@ define([
                 level.load(1);
 
                 var timeline = 0;
+
                 timer.add(Settings.CONSTRUCTION_TIME, function () {
                     // TRANSITION
                     level.transition();
+                    CLOCK.setTime(Math.round(Settings.PLAYING_TIME/1000));
+                    CLOCK.start();
                 });
 
                 timeline += Settings.CONSTRUCTION_TIME;
+                CLOCK.setTime(Math.round(timeline/1000));
+                CLOCK.start();
+
                 timer.add(timeline + Settings.TRANSITION_TIME, function () {
                     // GAME STARTS
                     async.series([

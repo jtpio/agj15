@@ -19,23 +19,15 @@
     <script src="../lib/flipclock/flipclock.min.js"></script>
 
     <!-- Entry point -->
-    <script data-main="./js/main.js" src="../lib/require.js"></script>
     <script type="text/javascript">
-      var clock = new FlipClock($('.the-clock'), {
+      var CLOCK = new FlipClock($('.the-clock'), {
         autoStart: false,
         countdown: true,
-        clockFace: 'MinuteCounter',
-        callbacks: {
-          stop: function(){
-            console.log('Finished');
-          }
-        }
+        clockFace: 'MinuteCounter'
       });
 
-      clock.setTime(90);
-      clock.start();
-      
     </script>
+    <script data-main="./js/main.js" src="../lib/require.js"></script>
 
   </body>
 </html>

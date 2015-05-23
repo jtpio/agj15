@@ -29,6 +29,10 @@ requirejs([
     }
 
     function create () {
+
+        // maybe remove that
+        game.stage.disableVisibilityChange = true;
+
         game.scale.fullScreenScaleMode = Phaser.ScaleManager.SHOW_ALL;
         game.stage.backgroundColor = '#FFFFFF';
         // var background = game.add.sprite(0, 0, 'sprites', 'Background.PNG');
@@ -51,6 +55,7 @@ requirejs([
         pauseKey = game.input.keyboard.addKey(Phaser.Keyboard.P);
         pauseKey.onUp.add(function () {
             game.paused = !game.paused;
+            CLOCK.running ? CLOCK.stop() : CLOCK.start();
         });
     }
 
