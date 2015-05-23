@@ -2,8 +2,9 @@
 
 requirejs([
     './networkManager',
-    '../../lib/jquery.min.js'
-], function (NetworkManager, jquery) {
+    '../../lib/jquery.min.js',
+    '../../lib/lodash.min.js'
+], function (NetworkManager, jquery, lodash) {
 
     var windowWidth = jQuery(window).width();
     var windowHeight = jQuery(window).height();
@@ -16,6 +17,10 @@ requirejs([
     var btn2 = null;
     var btn3 = null;
     var bmd = null;
+    var dico = null;
+    var puzzle = false;
+    var node = 0;
+    var words = [];
 
     var check = null, cross = null;
 
@@ -28,9 +33,7 @@ requirejs([
 
     var game = new Phaser.Game(windowWidth, windowHeight, Phaser.AUTO, 'player-canvas', {
         preload: preload,
-        create: create,
-        update: update,
-        render: render
+        create: create
     }, false, false);
 
 
@@ -42,6 +45,7 @@ requirejs([
         game.load.atlasJSONHash('controls', '../assets/img/game_spritesheet.png', '../assets/img/game_spritesheet.json');
         game.load.image('check', '../assets/img/check.png');
         game.load.image('cross', '../assets/img/cross.png');
+        game.load.json('dico', 'res/rhymes.json');
     }
 
     function create () {
@@ -67,18 +71,7 @@ requirejs([
 
         drawCross();
 
-        networkManager.getClient().addEventListener('puzzle', function(data){
-            console.log(data);
-            var scale = (windowHeight/4)/btnHeight;
-            var offsetY = (windowHeight/4);
-
-            btnToOption(btn0, 0, data);
-            btnToOption(btn1, 1, data);
-            btnToOption(btn2, 2, data);
-            btnToOption(btn3, 3, data);
-
-            bmd.clear();
-        });
+        dico = game.cache.getJSON('dico');
     }
     function createIcon(sprite, name){
         sprite = game.add.sprite(0, 0, name);
@@ -92,10 +85,14 @@ requirejs([
             windowHeight * btnLocations.y[index],
             'controls',
             function(){
-                console.log('Moving to '+index);
-                networkManager.getClient().sendCommand('goto', {
-                    glyph: index
-                });
+                if(puzzle){
+                    networkManager.getClient().sendCommand('puzzleSolved', {node:node, win:words[index].win});
+                    puzzle = false;
+                }else{
+                    networkManager.getClient().sendCommand('goto', {
+                        glyph: index
+                    });
+                }
                 resetButtons();
             },
             this,
@@ -107,13 +104,14 @@ requirejs([
         btn.anchor.setTo(0.5);
         btn.scale.setTo(btnScale);
         return btn;
+
     }
     function btnToOption(btn, index, data){
         var scale = (windowHeight/4)/(btnHeight*2);
         var offsetY = (windowHeight/4);
         game.add.tween(btn.scale).to({x:scale,y:scale}, 250, Phaser.Easing.Quadratic.InOut, true).onComplete.add(function(){
             game.add.tween(btn).to({x:btn.width/2,y:(index+1)*offsetY-offsetY/2}, 250, Phaser.Easing.Quadratic.InOut, true).onComplete.add(function(){
-                var text = game.make.text(0, 0, data[index], { font: "bold "+btn.height/2+"px Arial", fill: "#fff" });
+                var text = game.make.text(0, 0, data, { font: "bold "+btn.height/2+"px Arial", fill: "#fff" });
                 text.anchor.set(0, 0.5);
                 bmd.draw(text, btn.x+btn.width/2, btn.y);
             },this);
@@ -155,12 +153,28 @@ requirejs([
         bmd.render();
 
     }
-    function update () {
+    networkManager.getClient().addEventListener('movedTo', function(data){
+        var dif = dico[data.puzzle];
+        var wrongWords = _.pullAt(dif, Math.floor(Math.random()*dif.length));
+        var correctWord = _.pullAt(dif, Math.floor(Math.random()*dif.length));
+        words = [];
+        for(var i = 0; i < wrongWords[0].length; i++){
+            words.push({word:wrongWords[0][i], win:false});
+        }
+        words.push({word:correctWord[0][0], win:true});
+        _.shuffle(words);
 
-    }
-    function render () {
+        btnToOption(btn0, 0, words[0].word);    
+        btnToOption(btn1, 1, words[1].word);
+        btnToOption(btn2, 2, words[2].word);
+        btnToOption(btn3, 3, words[3].word);
 
-    }
+        puzzle=true;
+
+        node = data.node;
+
+        bmd.clear();
+    });
 
     function toggleFullScreen() {
         if (game.scale.isFullScreen) {
