@@ -85,15 +85,17 @@ requirejs([
             windowHeight * btnLocations.y[index],
             'controls',
             function(){
-                if(puzzle){
-                    networkManager.getClient().sendCommand('puzzleSolved', {node:node, win:words[index].win});
-                    puzzle = false;
-                }else{
-                    networkManager.getClient().sendCommand('goto', {
-                        glyph: index
-                    });
+                if(!animating){
+                    if(puzzle){
+                        networkManager.getClient().sendCommand('puzzleSolved', {node:node, win:words[index].win});
+                        puzzle = false;
+                        resetButtons();
+                    }else{
+                        networkManager.getClient().sendCommand('goto', {
+                            glyph: index
+                        });
+                    }
                 }
-                resetButtons();
             },
             this,
             'Phone_Glyph00'+(index+1) + '.png',
@@ -107,6 +109,7 @@ requirejs([
 
     }
     function btnToOption(btn, index, data){
+        animating = true;
         var scale = (windowHeight/4)/(btnHeight*2);
         var offsetY = (windowHeight/4);
         game.add.tween(btn.scale).to({x:scale,y:scale}, 250, Phaser.Easing.Quadratic.InOut, true).onComplete.add(function(){
@@ -114,17 +117,21 @@ requirejs([
                 var text = game.make.text(0, 0, data, { font: "bold "+btn.height/2+"px Arial", fill: "#fff" });
                 text.anchor.set(0, 0.5);
                 bmd.draw(text, btn.x+btn.width/2, btn.y);
+                animating = false;
             },this);
         }, this);
     }
     function optionToBtn(btn, index){
+        animating = true;
         game.add.tween(btn.scale).to({x:btnScale,y:btnScale}, 250, Phaser.Easing.Quadratic.InOut, true);
         game.add.tween(btn).to(
             {
                 x:windowWidth*btnLocations.x[index],
                 y:windowHeight*btnLocations.y[index]
             },
-            250, Phaser.Easing.Quadratic.InOut, true);
+            250, Phaser.Easing.Quadratic.InOut, true).onComplete.add(function(){
+                animating = false;
+            });
 
     }
     function resetButtons(){
