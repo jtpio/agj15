@@ -36,6 +36,30 @@ define([
 
         background.scale.setTo(1.5);
 
+        var positions = [{x:0, y:game.height*0.25}, {x:0, y:game.height*0.75}];
+
+        var heads = [];
+        var colors = ['Red', 'Blue'];
+
+        function newHead(index){
+            var head = game.add.sprite(0, 0, colors[index]+'Face');
+            head.position = positions[index];
+            head.anchor.setTo(0, 0.5);
+            head.scale.setTo(4);
+            return head;
+        }
+
+        heads.push(newHead(0));
+        heads.push(newHead(1));
+
+        /*var bmd = game.add.bitmapData(game.width, game.height);
+        game.add.text(0, 0, bmd);
+
+        bmd.clear();
+        var text = game.make.text(0, 0, "hello", { font: "bold 32px Arial", fill: "#fff" });
+        text.anchor.set(0, 0.5);
+        bmd.draw(text);*/
+
         async.forever(
             function (nextLoop) {
                 var timer = game.time.create(true);

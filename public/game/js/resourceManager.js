@@ -12,6 +12,8 @@ define([], function () {
         // graphics
         game.load.atlasJSONHash('sprites', '../assets/img/game_spritesheet.png', '../assets/img/game_spritesheet.json');
         game.load.image('1x1', '../assets/img/1x1.png');
+        game.load.image('RedFace', '../assets/img/redFace.png');
+        game.load.image('BlueFace', '../assets/img/blueFace.png');
 
         // audio
         game.load.audio('lobby', ['../assets/sounds/lobby001.mp3']);

@@ -40,7 +40,10 @@ define([
 	};
 
 	Node.prototype.solve = function (base) {
-		var flag = game.add.sprite(this.x + (base === 0 ? 1 : -1) * 30, this.y, 'sprites', (base === 0 ? 'Red' : 'Blue') + '002_Flag.png');
+		var color = (base === 0 ? 'Red' : 'Blue');
+		var flag = game.add.sprite(this.x + (base === 0 ? 1 : -1) * 30, this.y, 'sprites', color + '002_Flag.png');
+		flag.animations.add('idle', Phaser.Animation.generateFrameNames(color, 1, 2, '_Flag.png', 3), 7, true);
+		flag.animations.play('idle');
 		flag.scale.setTo(0);
 		flag.anchor.setTo(0.5);
         game.add.tween(flag.scale).to({ x: 2.5, y: 2.5 }, 500, Phaser.Easing.Bounce.InOut, true);
