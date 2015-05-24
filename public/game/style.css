@@ -3,6 +3,13 @@
     src: url('res/pixelart.ttf') format('truetype');
 }
 
+#logo{
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 10000;
+}
+
 body, html{
 	margin: 0;
 	padding: 0;
