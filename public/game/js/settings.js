@@ -11,7 +11,7 @@ define(function () {
 		GLYPHS_IDS: [0, 1, 2, 3],
 		GLYPHS_NAMES: ['', '', '', ''],
 		TRANSITION_TIME: 1000 * 4,
-		PLAYING_TIME: 1000 * 15
+		PLAYING_TIME: 1000 * 45
 	};
 
 	return Settings;

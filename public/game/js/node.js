@@ -40,10 +40,10 @@ define([
 	};
 
 	Node.prototype.solve = function (base) {
-		var flag = game.add.sprite(this.x, this.y, 'sprites', (base === 0 ? 'Red' : 'Blue') + '002_Flag.png');
+		var flag = game.add.sprite(this.x + (base === 0 ? 1 : -1) * 30, this.y, 'sprites', (base === 0 ? 'Red' : 'Blue') + '002_Flag.png');
 		flag.scale.setTo(0);
 		flag.anchor.setTo(0.5);
-        game.add.tween(flag.scale).to({ x: 4, y: 4 }, 500, Phaser.Easing.Bounce.InOut, true);
+        game.add.tween(flag.scale).to({ x: 2.5, y: 2.5 }, 500, Phaser.Easing.Bounce.InOut, true);
 		this.solved[base] = flag;
 	};
 

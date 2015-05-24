@@ -17,6 +17,8 @@ define([
     PlayerManager.prototype.loop = function () {
         var self = this;
 
+        var levelNumber = 1;
+
         var lobbySound = game.add.audio('lobby', 1);
         var windSound = game.add.audio('wind', 1);
         lobbySound.play();
@@ -40,7 +42,7 @@ define([
                 console.log('start transition');
 
                 // CONSTRUCTION
-                level.load(1);
+                level.load(levelNumber++);
                 lobbySound.resume();
                 windSound.pause();
 
@@ -58,6 +60,7 @@ define([
 
                     async.series([
                         function (callback) {
+                            p.sendCommand('init');
                             level.transition(function () {
                                callback();
                             });
@@ -135,9 +138,9 @@ define([
 
             // puzzle is solved
             p.addEventListener('puzzleSolved', function (data) {
-                if (!data.win) { 
+                if (!data.win) {
                     level.positionPlayer(p, _.noop);
-                    return; 
+                    return;
                 }
                 level.markPuzzleAsSolved({ node: data.node, player: p });
             });

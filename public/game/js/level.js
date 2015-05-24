@@ -32,8 +32,8 @@ define([
     var code;
     var grid;
     var nodes = [];
-    var graph = {};
     var tiles = [];
+    var nodesByGlyphID = {};
 
     // debug
     var debugGraphics;
@@ -66,8 +66,8 @@ define([
         if (debugGraphics) debugGraphics.destroy();
         grid = [];
         nodes = [];
-        graph = {};
         tiles = [];
+        nodesByGlyphID = {};
     };
 
     Level.prototype.load = function (levelNumber, loaded) {
@@ -119,41 +119,17 @@ define([
                     nodes.push(new Node(game, nodeID++, x, y, baseID));
                 });
 
-                var targets = [];// _.sample(tiles.children, nbNodes);
-                var offset = game.rnd.integerInRange(0, 20);
+                var targets = [];
                 var margin = Math.floor(0.25 * tiles.children.length);
                 var poll = tiles.children.slice(margin, tiles.children.length-margin);
-                var step = Math.floor(poll.length / nbNodes);
 
                 targets = _.sample(poll, nbNodes);
-/*
-                for (var i = offset; i < poll.length; i+=step) {
-                    targets.push(poll[i%poll.length]);
-                }*/
 
                 targets.forEach(function (target) {
                     var x = target.x;
                     var y = target.y;
                     nodes.push(new Node(game, nodeID++, x, y));
                 });
-                // Construct the graph.
-                // Each node has a maximum of neighbors equal to the number of glyphs - 1
-                var nodesByGlyphID = _.groupBy(nodes, 'glyph');
-
-                nodes.forEach(function (node) {
-                    graph[node.id] = glyphs.map(function (glyphID) {
-                        if (!nodesByGlyphID[glyphID]) {
-                            return -1;
-                        }
-                        var nearest = _.min(nodesByGlyphID[glyphID], function (c) {
-                            return Math.pow(c.x-node.x, 2) + Math.pow(c.y-node.y, 2);
-                        });
-                        return nearest.id;
-                    });
-                    _.remove(graph[node.id], function (n) { return n === node.id || n < 0; });
-                });
-
-                // self.debug();
 
                 async.each(tiles.children, function (tile, done) {
                     var nearest = _.min(nodes, function (node) {
@@ -212,17 +188,25 @@ define([
         var self = this;
         var p = data.player;
         var glyph = data.glyph;
+        var curr = nodes[p.currentNode];
 
-        var candidates = graph[p.currentNode];
+        var candidates = _.uniq(
+            _.sortBy(nodes.filter(function (n) {
+                return curr.id !== n.id && !n.isSolved(p.base);
+            }), function (n) {
+                return Math.pow(curr.x-n.x, 2) + Math.pow(curr.y-n.y, 2);
+            }), function (n) {
+                return n.glyph;
+        });
 
-        if (!candidates) {
+        console.log(candidates);
+
+        if (candidates.length === 0) {
             return callback({});
         }
 
-        var moveTo = candidates.map(function (c) {
-            return nodes[c];
-        }).filter(function (n) {
-            return n.glyph === glyph;
+        var moveTo = candidates.filter(function (c) {
+            return c.glyph === glyph;
         }).pop();
 
         if (moveTo && !p.isMoving) {
