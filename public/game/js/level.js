@@ -7,7 +7,7 @@ define([
 ], function (QRCode, Node, Settings) {
 
     var glyphs = Settings.GLYPHS_IDS;
-    var codeColors = [0x000066, 0x006600, 0x660000];
+    var codeColors = [0x000000];
     var xRange = { min: 0, max: 0};
     var yRange = { min: 0, max: 0};
     var nbNodes = 10;
@@ -119,15 +119,18 @@ define([
                     nodes.push(new Node(game, nodeID++, x, y, baseID));
                 });
 
-                var targets = _.sample(tiles.children, nbNodes);
+                var targets = [];// _.sample(tiles.children, nbNodes);
+                var offset = game.rnd.integerInRange(0, 20);
+                var margin = Math.floor(0.25 * tiles.children.length);
+                var poll = tiles.children.slice(margin, tiles.children.length-margin);
+                var step = Math.floor(poll.length / nbNodes);
 
-/*                var targets = [
-                    tiles.children[50],
-                    tiles.children[100],
-                    tiles.children[200],
-                    tiles.children[320],
-                ];
-    */
+                targets = _.sample(poll, nbNodes);
+/*
+                for (var i = offset; i < poll.length; i+=step) {
+                    targets.push(poll[i%poll.length]);
+                }*/
+
                 targets.forEach(function (target) {
                     var x = target.x;
                     var y = target.y;
@@ -211,6 +214,10 @@ define([
         var glyph = data.glyph;
 
         var candidates = graph[p.currentNode];
+
+        if (!candidates) {
+            return callback({});
+        }
 
         var moveTo = candidates.map(function (c) {
             return nodes[c];

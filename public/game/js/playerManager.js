@@ -17,6 +17,17 @@ define([
     PlayerManager.prototype.loop = function () {
         var self = this;
 
+        var lobbySound = game.add.audio('lobby', 1);
+        var windSound = game.add.audio('wind', 1);
+        lobbySound.play();
+        lobbySound.onLoop.add(function () {
+            lobbySound.play();
+        });
+        windSound.play();
+        windSound.onLoop.add(function () {
+            windSound.play();
+        });
+
         var topLeft = level.getTopLeft();
         console.log(topLeft);
         var background = game.add.sprite(topLeft.x, topLeft.y, 'sprites', 'Background.png');
@@ -30,6 +41,8 @@ define([
 
                 // CONSTRUCTION
                 level.load(1);
+                lobbySound.resume();
+                windSound.pause();
 
                 CLOCK.setTime(Math.round(Settings.TRANSITION_TIME/1000));
                 CLOCK.start();
@@ -38,6 +51,11 @@ define([
                     CLOCK.setTime(Math.round(Settings.PLAYING_TIME/1000));
                     CLOCK.start();
                     // GAME STARTS
+                    if (!lobbySound.paused) {
+                        lobbySound.pause();
+                    }
+                    windSound.resume();
+
                     async.series([
                         function (callback) {
                             level.transition(function () {

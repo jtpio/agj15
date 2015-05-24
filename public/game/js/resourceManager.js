@@ -14,7 +14,8 @@ define([], function () {
         game.load.image('1x1', '../assets/img/1x1.png');
 
         // audio
-        // game.load.audio('hit02', ['assets/sound/hit02.mp3']);
+        game.load.audio('lobby', ['../assets/sounds/lobby001.mp3']);
+        game.load.audio('wind', ['../assets/sounds/wind.mp3']);
     };
 
     ResourceManager.prototype.create = function() {

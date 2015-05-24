@@ -55,6 +55,8 @@ requirejs([
             game.paused = !game.paused;
             CLOCK.running ? CLOCK.stop() : CLOCK.start();
         });
+
+        game.sound.setMute(true);
     }
 
     function restart () {
