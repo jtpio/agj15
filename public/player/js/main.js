@@ -192,7 +192,7 @@ requirejs([
             words.push({word:wrongWords[0][i], win:false});
         }
         words.push({word:correctWord[0][0], win:true});
-        _.shuffle(words);
+        words = _.shuffle(words);
 
         btnToOption(btn0, 0, words[0].word);    
         btnToOption(btn1, 1, words[1].word);
