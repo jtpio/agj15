@@ -129,7 +129,7 @@ define([
 
     PlayerManager.prototype.setupPlayers = function (done) {
         var self = this;
-        var playerIds = Object.keys(this.players).slice(0, 2);
+        var playerIds = _.shuffle(Object.keys(this.players).slice(0, 2));
         var colors = ['Red', 'Blue'];
         var i = 0;
         async.each(playerIds, function (pid, callback) {
@@ -141,6 +141,7 @@ define([
             p.sprite.anchor.setTo(0.5);
             p.sprite.scale.setTo(1);
 
+            p.sendCommand('color', { colorID: p.base });
             p.sprite.animations.add('idle', Phaser.Animation.generateFrameNames(color, 1, 4, '_idle.png', 3), 7, true);
             p.sprite.animations.play('idle');
 
