@@ -55,6 +55,14 @@ requirejs([
             game.paused = !game.paused;
             CLOCK.running ? CLOCK.stop() : CLOCK.start();
         });
+        $(window).blur(function() {
+            game.paused = !game.paused;
+            CLOCK.running ? CLOCK.stop() : CLOCK.start();
+        });
+        $(window).focus(function() {
+            game.paused = !game.paused;
+            CLOCK.running ? CLOCK.stop() : CLOCK.start();
+        });
 
         // game.sound.setMute(true);
     }

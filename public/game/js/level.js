@@ -216,7 +216,7 @@ define([
 
     Level.prototype.positionPlayer = function (p, callback) {
         p.sprite.alpha = 0;
-        if (p.ways) p.ways.clear();
+        if(p.steps) _.forEach(p.steps, function(n){n.destroy()});
 
         game.add.tween(p.sprite.position).to({ x: nodes[p.base].x, y: nodes[p.base].y }, 500, Phaser.Easing.Quadratic.InOut, true)
             .chain(
@@ -281,16 +281,23 @@ define([
             }), function (n) {
                 return n.glyph;
         });
-
-        if (p.ways) p.ways.clear();
-
-        p.ways = game.add.graphics();
-        p.ways.lineStyle(5, p.base === 0 ? 0xff0000 : 0x000ff, 0.5);
+        if(p.steps) _.forEach(p.steps, function(n){n.destroy()});
+        var steps = [];
         ways.forEach(function (w) {
-            p.ways.moveTo(curr.x, curr.y);
-            p.ways.lineTo(w.x, w.y);
+            var line = new Phaser.Line(curr.x, curr.y, w.x, w.y);
+            
+            steps=steps.concat(
+                line.coordinatesOnLine(32).slice(1).map(function(coord){
+                    console.log(coord);
+                    var sprite = game.add.sprite(coord[0], coord[1], 'sprites', 'Steps.png');
+                    sprite.anchor.setTo(0.5);
+                    sprite.scale.setTo(2);
+                    sprite.rotation = line.normalAngle;
+                    return sprite;
+                })
+            );
         });
-
+        p.steps = steps;
         if (!node.isSolved(p.base)) {
             res.puzzle = node.difficulty;
         }
