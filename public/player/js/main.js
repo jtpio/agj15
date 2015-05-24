@@ -137,7 +137,7 @@ requirejs([
         var offsetY = (windowHeight/4);
         game.add.tween(btn.scale).to({x:scale,y:scale}, 250, Phaser.Easing.Quadratic.InOut, true).onComplete.add(function(){
             game.add.tween(btn).to({x:btn.width/2,y:(index+1)*offsetY-offsetY/2}, 250, Phaser.Easing.Quadratic.InOut, true).onComplete.add(function(){
-                var text = game.make.text(0, 0, data, { font: "bold "+btn.height/2+"px Arial", fill: "#fff" });
+                var text = game.make.text(0, 0, data, { font: "bold "+btn.height/2+"px pixelArt", fill: "#fff" });
                 text.anchor.set(0, 0.5);
                 bmd.draw(text, btn.x+btn.width/2, btn.y);
                 animating = false;
@@ -208,7 +208,9 @@ requirejs([
 
     networkManager.getClient().addEventListener('init', function(){
         resetButtons();
-        bmp.clear();
+        animating = false;
+        puzzle = false;
+        if(bmd)bmd.clear();
     });
 
     function toggleFullScreen() {

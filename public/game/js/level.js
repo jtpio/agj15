@@ -73,7 +73,7 @@ define([
 
     Level.prototype.load = function (levelNumber, loaded) {
         this.reset();
-
+        
         async.series({
             generateCode: function (next) {
                 code = new QRCode(document.getElementById('game-canvas'), {
@@ -130,7 +130,49 @@ define([
                     var y = target.y;
                     nodes.push(new Node(game, nodeID++, x, y));
                 });
+                
+                for(var i = 0; i < nodes.length; i++){
+                    var self = nodes[i];
+                    if(self.base)continue;
+                    for(var j = i+1; j < nodes.length; j++){
+                        var other = nodes[j];
+                        if(other.base)continue;
 
+                        var dx = self.x - other.x;
+                        var dy = self.y - other.y;
+
+                        var d = Math.sqrt(dx*dx + dy*dy);
+
+                        var md = 100;
+                        if(d < md){
+                            var dR = md-d;
+
+                            var vx = dx/d;
+                            var vy = dy/d;
+
+                            self.sprite.position.x += vx * dR;
+                            self.sprite.position.y += vy * dR;
+
+                            other.sprite.position.x -= vx * dR;
+                            other.sprite.position.y -= vy * dR;
+
+                            if(self.sprite.position.x < xRange.min)self.sprite.position.x = xRange.min;
+                            if(self.sprite.position.x > xRange.max)self.sprite.position.x = xRange.max;
+                            if(self.sprite.position.y < yRange.min)self.sprite.position.y = yRange.min;
+                            if(self.sprite.position.y > yRange.max)self.sprite.position.y = yRange.max;
+                            if(other.sprite.position.x < xRange.min)other.sprite.position.x = xRange.min;
+                            if(other.sprite.position.x > xRange.max)other.sprite.position.x = xRange.max;
+                            if(other.sprite.position.y < yRange.min)other.sprite.position.y = yRange.min;
+                            if(other.sprite.position.y > yRange.max)other.sprite.position.y = yRange.max;
+
+                            self.x = self.sprite.position.x;
+                            self.y = self.sprite.position.y;
+                            other.x = other.sprite.position.x;
+                            other.y = other.sprite.position.y;
+                        }
+                    }
+                }
+                
                 async.each(tiles.children, function (tile, done) {
                     var nearest = _.min(nodes, function (node) {
                         return Math.pow(tile.position.x-node.x, 2) + Math.pow(tile.position.y-node.y, 2);
