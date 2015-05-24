@@ -129,24 +129,26 @@ define([
 
     PlayerManager.prototype.setupPlayers = function (done) {
         var self = this;
-        var playerIds = _.shuffle(Object.keys(this.players).slice(0, 2));
-        var colors = ['Red', 'Blue'];
+        var playerIds = Object.keys(this.players).slice(0, 2);
+        var colors = _.shuffle([['Red', 0], ['Blue', 1]]);
         var i = 0;
         async.each(playerIds, function (pid, callback) {
             var color = colors[i];
             var p = self.players[pid];
             p.sendCommand('init');
-            p.sprite = game.add.sprite(100, 100, 'sprites', color + '001_idle.png');
+            p.sprite = game.add.sprite(100, 100, 'sprites', color[0] + '001_idle.png');
             p.sprite.alpha = 0;
             p.sprite.anchor.setTo(0.5);
             p.sprite.scale.setTo(1);
 
-            p.sendCommand('color', { colorID: p.base });
-            p.sprite.animations.add('idle', Phaser.Animation.generateFrameNames(color, 1, 4, '_idle.png', 3), 7, true);
+            p.sprite.animations.add('idle', Phaser.Animation.generateFrameNames(color[0], 1, 4, '_idle.png', 3), 7, true);
             p.sprite.animations.play('idle');
 
-            p.base = i;
+            p.base = color[1];
             i++;
+
+            p.sendCommand('color', { colorID: p.base });
+
             level.positionPlayer(p, function () {
                 callback();
             });
@@ -227,11 +229,13 @@ define([
         // handle the disconnect event
         netPlayer.addEventListener('disconnect', function () {
             console.log('PLAYER DISCONNECTED', netPlayer.id);
-            var player = self.players[netPlayer.id];
-            if (!player) return;
+            var p = self.players[netPlayer.id];
+            if (!p) return;
 
-            player.removeAllListeners();
-            if (player.sprite)player.sprite.destroy();
+            if (p.steps) _.forEach(p.steps, function(n){n.destroy()});
+
+            p.removeAllListeners();
+            if (p.sprite) p.sprite.destroy();
             delete self.players[netPlayer.id];
         });
 

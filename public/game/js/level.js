@@ -285,13 +285,11 @@ define([
         var steps = [];
         ways.forEach(function (w) {
             var line = new Phaser.Line(curr.x, curr.y, w.x, w.y);
-            
+
             steps=steps.concat(
                 line.coordinatesOnLine(32).slice(1).map(function(coord){
-                    console.log(coord);
                     var sprite = game.add.sprite(coord[0], coord[1], 'sprites', 'Steps.png');
                     sprite.anchor.setTo(0.5);
-                    sprite.scale.setTo(2);
                     sprite.rotation = line.normalAngle;
                     return sprite;
                 })
