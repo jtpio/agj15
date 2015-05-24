@@ -51,7 +51,9 @@ define([
     };
 
     function buildURL(levelNumber) {
-        return 'http://' + game.serverIP + ':' + game.serverPort + '/player/?gameID='+game.gameID+'&level='+levelNumber;
+        var split = window.location.href.split('/');
+        var root = split[2];
+        return 'http://' + root + '/player/?gameID='+game.gameID+'&level='+levelNumber;
     }
 
     // cleanup
