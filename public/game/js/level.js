@@ -73,7 +73,7 @@ define([
 
     Level.prototype.load = function (levelNumber, loaded) {
         this.reset();
-        
+
         async.series({
             generateCode: function (next) {
                 code = new QRCode(document.getElementById('game-canvas'), {
@@ -130,7 +130,7 @@ define([
                     var y = target.y;
                     nodes.push(new Node(game, nodeID++, x, y));
                 });
-                
+
                 for(var i = 0; i < nodes.length; i++){
                     var self = nodes[i];
                     if(self.base)continue;
@@ -172,7 +172,7 @@ define([
                         }
                     }
                 }
-                
+
                 async.each(tiles.children, function (tile, done) {
                     var nearest = _.min(nodes, function (node) {
                         return Math.pow(tile.position.x-node.x, 2) + Math.pow(tile.position.y-node.y, 2);
@@ -194,7 +194,11 @@ define([
 
     Level.prototype.transition = function (callback) {
         nodes.forEach(function (node) {
-            game.add.tween(node.sprite.scale).to({ x: node.size, y: node.size }, 500, Phaser.Easing.Quadratic.InOut, true, 500 * Math.random());
+            game.add.tween(node.sprite.scale).to({ x: node.size, y: node.size }, 500, Phaser.Easing.Quadratic.InOut, true, 500 * Math.random())
+            .onComplete.add(function () {
+                if (node.hasOwnProperty('base')) { return; }
+                game.add.tween(node.sprite.scale).to({ x: 1.1*node.size, y: 1.1*node.size }, 1000, Phaser.Easing.Cubic.InOut, true, 1000 * Math.random(), -1, true);
+            });
         });
 
         async.each(tiles.children, function (tile, done) {
