@@ -7,6 +7,9 @@ define([
 
     var game;
     var level;
+    var bmd;
+    var heads = [];
+    var scores = [0, 0];
 
     var PlayerManager = function (g) {
         game = g;
@@ -38,7 +41,6 @@ define([
 
         var positions = [{x:0, y:game.height*0.25}, {x:0, y:game.height*0.75}];
 
-        var heads = [];
         var colors = ['Red', 'Blue'];
 
         function newHead(index){
@@ -52,13 +54,10 @@ define([
         heads.push(newHead(0));
         heads.push(newHead(1));
 
-        /*var bmd = game.add.bitmapData(game.width, game.height);
-        game.add.text(0, 0, bmd);
+        bmd = game.add.bitmapData(game.width, game.height);
+        bmd.addToWorld();
 
-        bmd.clear();
-        var text = game.make.text(0, 0, "hello", { font: "bold 32px Arial", fill: "#fff" });
-        text.anchor.set(0, 0.5);
-        bmd.draw(text);*/
+        this.redrawScores();
 
         async.forever(
             function (nextLoop) {
@@ -167,10 +166,22 @@ define([
                     return;
                 }
                 level.markPuzzleAsSolved({ node: data.node, player: p });
+                scores[p.base]++;
+                self.redrawScores();
             });
 
         });
     };
+    PlayerManager.prototype.redrawScores = function(){
+        console.log("redrawing text...");
+        bmd.clear();
+        var text = game.make.text(heads[0].position.x+heads[0].width*1.5, heads[0].position.y, ''+scores[0], { font: "bold 64px pixelArt", fill: "#fff" });
+        text.anchor.set(0, 0.5);
+        bmd.draw(text);
+        text = game.make.text(heads[1].position.x+heads[1].width*1.5, heads[1].position.y, ''+scores[1], { font: "bold 64px pixelArt", fill: "#fff" });
+        text.anchor.set(0, 0.5);
+        bmd.draw(text);
+    }
 
     PlayerManager.prototype.clearListeners = function () {
         var self = this;

@@ -181,7 +181,6 @@ requirejs([
         bmd.ctx.stroke();
         bmd.ctx.closePath();
         bmd.render();
-
     }
     networkManager.getClient().addEventListener('movedTo', function(data){
         var dif = dico[data.puzzle];
