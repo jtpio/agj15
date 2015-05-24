@@ -271,6 +271,25 @@ define([
 
         var res = { node: node.id };
 
+        var curr = nodes[p.currentNode];
+        var ways = _.uniq(
+            _.sortBy(nodes.filter(function (n) {
+                return curr.id !== n.id && !n.isSolved(p.base);
+            }), function (n) {
+                return Math.pow(curr.x-n.x, 2) + Math.pow(curr.y-n.y, 2);
+            }), function (n) {
+                return n.glyph;
+        });
+
+        if (p.ways) p.ways.clear();
+
+        p.ways = game.add.graphics();
+        p.ways.lineStyle(5, p.base === 0 ? 0xff0000 : 0x000ff, 0.5);
+        ways.forEach(function (w) {
+            p.ways.moveTo(curr.x, curr.y);
+            p.ways.lineTo(w.x, w.y);
+        });
+
         if (!node.isSolved(p.base)) {
             res.puzzle = node.difficulty;
         }

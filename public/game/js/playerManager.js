@@ -208,9 +208,9 @@ define([
         console.log('removePlayers', this.players);
         Object.keys(this.players).forEach(function (pid, i) {
             var p = self.players[pid];
-            if (p.sprite) {
-                p.sprite.destroy();
-            }
+            if (p.sprite) p.sprite.destroy();
+            if (p.ways) p.ways.clear();
+
             p.sendCommand('init');
         });
     };
