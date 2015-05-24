@@ -216,6 +216,7 @@ requirejs([
 
     networkManager.getClient().addEventListener('color', function(data){
         game.stage.backgroundColor = data.colorID === 0?'#ff6535':'#3000ff';
+        drawCross();
     });
 
     function toggleFullScreen() {
