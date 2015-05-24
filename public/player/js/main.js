@@ -54,7 +54,7 @@ requirejs([
 
     function create () {
         game.scale.fullScreenScaleMode = Phaser.ScaleManager.SHOW_ALL;
-        game.stage.backgroundColor = '#808080';
+        game.stage.backgroundColor = '#afa03a';
 
         btn0 = createButton(0);
         btn1 = createButton(1);
@@ -208,6 +208,7 @@ requirejs([
 
     networkManager.getClient().addEventListener('init', function(){
         resetButtons();
+        bmp.clear();
     });
 
     function toggleFullScreen() {

@@ -135,7 +135,10 @@ define([
 
             // puzzle is solved
             p.addEventListener('puzzleSolved', function (data) {
-                if (!data.win) { return; }
+                if (!data.win) { 
+                    level.positionPlayer(p, _.noop);
+                    return; 
+                }
                 level.markPuzzleAsSolved({ node: data.node, player: p });
             });
 
