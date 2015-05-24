@@ -22,7 +22,7 @@ requirejs([
     var node = 0;
     var words = [];
     var animating = false;
-
+    var sounds = [];
     var check = null, cross = null;
 
     var btnLocations = {
@@ -47,14 +47,14 @@ requirejs([
         game.load.image('check', '../assets/img/check.png');
         game.load.image('cross', '../assets/img/cross.png');
         game.load.json('dico', 'res/rhymes.json');
+        game.load.audio('wrong001', '../assets/sounds/wrong001.mp3');
+        game.load.audio('wrong002', '../assets/sounds/wrong002.mp3');
+        game.load.audio('correct', '../assets/sounds/correct.mp3');
     }
 
     function create () {
         game.scale.fullScreenScaleMode = Phaser.ScaleManager.SHOW_ALL;
         game.stage.backgroundColor = '#808080';
-
-        createIcon(check, 'check');
-        createIcon(cross, 'cross');
 
         btn0 = createButton(0);
         btn1 = createButton(1);
@@ -72,13 +72,21 @@ requirejs([
 
         drawCross();
 
+        check = createIcon('check');
+        cross = createIcon('cross');
+
+        sounds.push(game.add.audio('wrong001'));
+        sounds.push(game.add.audio('wrong002'));
+        sounds.push(game.add.audio('correct'));
+
         dico = game.cache.getJSON('dico');
     }
-    function createIcon(sprite, name){
-        sprite = game.add.sprite(0, 0, name);
+    function createIcon(name){
+        var sprite = game.add.sprite(0, 0, name);
         sprite.scale.setTo(btnScale);
         sprite.anchor.setTo(0.5);
-        sprite.position.setTo(windowWidth/2, sprite.height);
+        sprite.position.setTo(windowWidth/2, -sprite.height/2);
+        return sprite;
     }
     function createButton(index){
         var btn = game.add.button(
@@ -89,6 +97,20 @@ requirejs([
                 if(!animating){
                     if(puzzle){
                         networkManager.getClient().sendCommand('puzzleSolved', {node:node, win:words[index].win});
+                        if(words[index].win){
+                            sounds[2].play();
+                            check.position.setTo(windowWidth/2, -check.height/2);
+                            game.add.tween(check.position).to({y:windowHeight/2}, 800, Phaser.Easing.Quintic.Out, true).onComplete.add(function(){
+                                game.add.tween(check.position).to({y:windowHeight+check.height/2}, 800, Phaser.Easing.Quintic.In, true);
+                            });
+                        }else{
+                            sounds[_.random(0, 1)].play();
+                            cross.position.setTo(windowWidth/2, windowHeight/2);
+                            cross.scale.setTo(0);
+                            game.add.tween(cross.scale).to({x:btnScale, y:btnScale}, 800, Phaser.Easing.Elastic.InOut, true).onComplete.add(function(){
+                                game.add.tween(cross.scale).to({x:0,y:0}, 800, Phaser.Easing.Elastic.InOut, true);
+                            });
+                        }
                         puzzle = false;
                         resetButtons();
                     }else{
