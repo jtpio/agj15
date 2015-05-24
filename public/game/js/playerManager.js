@@ -60,7 +60,6 @@ define([
 
                     async.series([
                         function (callback) {
-                            p.sendCommand('init');
                             level.transition(function () {
                                callback();
                             });
@@ -101,6 +100,7 @@ define([
         async.each(playerIds, function (pid, callback) {
             var color = colors[i];
             var p = self.players[pid];
+            p.sendCommand('init');
             p.sprite = game.add.sprite(100, 100, 'sprites', color + '001_idle.png');
             p.sprite.alpha = 0;
             p.sprite.anchor.setTo(0.5);
