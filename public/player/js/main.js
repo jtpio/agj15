@@ -214,6 +214,10 @@ requirejs([
         if(bmd)bmd.clear();
     });
 
+    networkManager.getClient().addEventListener('color', function(data){
+        game.stage.backgroundColor = data.colorID === 0?'#ff6535':'#3000ff';
+    });
+
     function toggleFullScreen() {
         if (game.scale.isFullScreen) {
             game.scale.stopFullScreen();
