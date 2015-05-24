@@ -33,6 +33,7 @@ define([
     var nodes = [];
     var tiles = [];
     var nodesByGlyphID = {};
+    var url = '';
 
     // debug
     var debugGraphics;
@@ -50,10 +51,19 @@ define([
         return { x: xRange.min, y: yRange.min };
     };
 
+    Level.prototype.getBottomLeft = function () {
+        return { x: xRange.min, y: yRange.max };
+    };
+
+    Level.prototype.getURL = function () {
+        return url;
+    };
+
     function buildURL(levelNumber) {
         var split = window.location.href.split('/');
         var root = split[2];
-        return 'http://' + root + '/player/?gameID='+game.gameID+'&level='+levelNumber;
+        url = root + '/player/?gameID='+game.gameID;
+        return 'http://' + url +'&level='+levelNumber;
     }
 
     // cleanup

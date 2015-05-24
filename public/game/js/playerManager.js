@@ -8,6 +8,7 @@ define([
     var game;
     var level;
     var bmd;
+    var bmdUrl;
     var heads = [];
     var scores = [0, 0];
 
@@ -62,6 +63,9 @@ define([
         bmd = game.add.bitmapData(game.width, game.height);
         bmd.addToWorld();
 
+        bmdUrl = game.add.bitmapData(game.width, game.height);
+        bmdUrl.addToWorld();
+
         this.redrawScores();
 
         async.forever(
@@ -74,6 +78,12 @@ define([
                 lobbySound.resume();
                 windSound.pause();
 
+                bmdUrl.clear();
+                var pos = level.getBottomLeft();
+                var text = game.make.text(pos.x, pos.y, level.getURL(), { font: 'bold 32px Arial', fill: '#fff' });
+                text.anchor.set(0, 0.5);
+                bmdUrl.draw(text);
+
                 CLOCK.setTime(Math.round(Settings.TRANSITION_TIME/1000));
                 CLOCK.start();
 
@@ -81,6 +91,7 @@ define([
                     CLOCK.setTime(Math.round(Settings.PLAYING_TIME/1000));
                     CLOCK.start();
                     // GAME STARTS
+                    bmdUrl.clear();
                     if (!lobbySound.paused) {
                         lobbySound.pause();
                     }
