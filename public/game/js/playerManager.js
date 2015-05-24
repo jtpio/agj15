@@ -209,7 +209,7 @@ define([
         Object.keys(this.players).forEach(function (pid, i) {
             var p = self.players[pid];
             if (p.sprite) p.sprite.destroy();
-            if (p.ways) p.ways.clear();
+            if(p.steps) _.forEach(p.steps, function(n){n.destroy()});
 
             p.sendCommand('init');
         });
