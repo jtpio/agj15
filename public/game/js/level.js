@@ -6,7 +6,6 @@ define([
     './settings'
 ], function (QRCode, Node, Settings) {
 
-    var glyphs = Settings.GLYPHS_IDS;
     var codeColors = [0x000000];
     var xRange = { min: 0, max: 0};
     var yRange = { min: 0, max: 0};
@@ -71,7 +70,6 @@ define([
     };
 
     Level.prototype.load = function (levelNumber, loaded) {
-        var self = this;
         this.reset();
 
         async.series({
@@ -199,8 +197,6 @@ define([
                 return n.glyph;
         });
 
-        console.log(candidates);
-
         if (candidates.length === 0) {
             return callback({});
         }
@@ -241,18 +237,6 @@ define([
         nodes[node].solve(player.base);
 
         if (callback) callback();
-    };
-
-    Level.prototype.debug = function () {
-        debugGraphics = game.add.graphics();
-        debugGraphics.lineStyle(2, 0x000000);
-
-        Object.keys(graph).forEach(function (node) {
-            debugGraphics.moveTo(nodes[node].x, nodes[node].y);
-            graph[node].forEach(function (to) {
-                debugGraphics.lineTo(nodes[to].x, nodes[to].y);
-            });
-        });
     };
 
     return Level;

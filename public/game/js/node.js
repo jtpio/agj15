@@ -18,11 +18,11 @@ define([
 			this.base = base;
 			var color = (parseInt(base,10) === 0 ? 'Red' : 'Blue');
 			this.baseColor = color;
-			this.glyph = 0;
+			this.glyph = -1;
 	        this.sprite = game.add.sprite(x, y, 'sprites', color + '001_tent.png');
 	        this.sprite.animations.add('idle', Phaser.Animation.generateFrameNames(color, 1, 4, '_tent.png', 3), 7, true);
 	        this.sprite.animations.play('idle');
-	        this.size = 3;
+	        this.size = 2;
 		} else {
 			// this.glyph = _.sample(glyphs); // will be back later
 			this.glyph = glyphs[id % glyphs.length];
