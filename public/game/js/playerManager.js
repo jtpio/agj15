@@ -80,7 +80,7 @@ define([
 
                 bmdUrl.clear();
                 var pos = level.getBottomLeft();
-                var text = game.make.text(pos.x, pos.y, level.getURL(), { font: 'bold 32px Arial', fill: '#fff' });
+                var text = game.make.text(pos.x, pos.y + 20, level.getURL(), { font: 'bold 32px Arial', fill: '#fff' });
                 text.anchor.set(0, 0.5);
                 bmdUrl.draw(text);
 
@@ -91,7 +91,6 @@ define([
                     CLOCK.setTime(Math.round(Settings.PLAYING_TIME/1000));
                     CLOCK.start();
                     // GAME STARTS
-                    bmdUrl.clear();
                     if (!lobbySound.paused) {
                         lobbySound.pause();
                     }
