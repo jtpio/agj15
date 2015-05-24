@@ -178,7 +178,7 @@ define([
                     return;
                 }
                 level.markPuzzleAsSolved({ node: data.node, player: p });
-                scores[p.base]++;
+                scores[p.base]+=data.points;
                 self.redrawScores();
             });
 

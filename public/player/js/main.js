@@ -24,6 +24,7 @@ requirejs([
     var animating = false;
     var sounds = [];
     var check = null, cross = null;
+    var points = 0;
 
     var btnLocations = {
         x:[0.25, 0.75, 0.25, 0.75],
@@ -96,7 +97,7 @@ requirejs([
             function(){
                 if(!animating){
                     if(puzzle){
-                        networkManager.getClient().sendCommand('puzzleSolved', {node:node, win:words[index].win});
+                        networkManager.getClient().sendCommand('puzzleSolved', {node:node, win:words[index].win, points:points});
                         if(words[index].win){
                             sounds[2].play();
                             check.position.setTo(windowWidth/2, -check.height/2);
@@ -184,6 +185,7 @@ requirejs([
     }
     networkManager.getClient().addEventListener('movedTo', function(data){
         var dif = dico[data.puzzle];
+        points = data.puzzle+1;
         var wrongWords = _.pullAt(dif, Math.floor(Math.random()*dif.length));
         var correctWord = _.pullAt(dif, Math.floor(Math.random()*dif.length));
         words = [];
