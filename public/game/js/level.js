@@ -216,6 +216,7 @@ define([
 
     Level.prototype.positionPlayer = function (p, callback) {
         p.sprite.alpha = 0;
+        if (p.ways) p.ways.clear();
 
         game.add.tween(p.sprite.position).to({ x: nodes[p.base].x, y: nodes[p.base].y }, 500, Phaser.Easing.Quadratic.InOut, true)
             .chain(
@@ -274,7 +275,7 @@ define([
         var curr = nodes[p.currentNode];
         var ways = _.uniq(
             _.sortBy(nodes.filter(function (n) {
-                return curr.id !== n.id && !n.isSolved(p.base);
+                return curr.id !== n.id && !n.hasOwnProperty('base') && !n.isSolved(p.base);
             }), function (n) {
                 return Math.pow(curr.x-n.x, 2) + Math.pow(curr.y-n.y, 2);
             }), function (n) {
