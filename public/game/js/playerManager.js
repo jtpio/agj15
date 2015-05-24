@@ -45,14 +45,19 @@ define([
 
         function newHead(index){
             var head = game.add.sprite(0, 0, colors[index]+'Face');
-            head.position = positions[index];
-            head.anchor.setTo(0, 0.5);
             head.scale.setTo(4);
+            head.position = positions[index];
+            head.position.x += head.width / 2;
+            head.rotation = -0.5;
+            head.anchor.setTo(0.5);
             return head;
         }
 
         heads.push(newHead(0));
         heads.push(newHead(1));
+
+        var happyTween = game.add.tween(heads[0]).from({rotation: -0.5}).to({rotation: 0.5}, 250, Phaser.Easing.Cubic.InOut, true, 0, -1, true);
+        var happyTween2 = game.add.tween(heads[1]).from({rotation: -1}).to({rotation: 1}, 1000, Phaser.Easing.Cubic.InOut, true, 0, -1, true);
 
         bmd = game.add.bitmapData(game.width, game.height);
         bmd.addToWorld();
@@ -79,6 +84,11 @@ define([
                     if (!lobbySound.paused) {
                         lobbySound.pause();
                     }
+                    happyTween.pause();
+                    happyTween2.pause();
+                    game.add.tween(heads[0]).to({rotation: 0}, 250, Phaser.Easing.Cubic.InOut, true, 0);
+                    game.add.tween(heads[1]).to({rotation: 0}, 250, Phaser.Easing.Cubic.InOut, true, 0);
+
                     windSound.resume();
 
                     async.series([
@@ -102,6 +112,8 @@ define([
 
                 timer.add(Settings.TRANSITION_TIME + Settings.PLAYING_TIME, function () {
                     // GAME ENDS
+                    happyTween.resume();
+                    happyTween2.resume();
                     self.clearListeners();
                     self.removePlayers();
                     nextLoop();
@@ -218,7 +230,7 @@ define([
             if (!player) return;
 
             player.removeAllListeners();
-            player.sprite.destroy();
+            if (player.sprite)player.sprite.destroy();
             delete self.players[netPlayer.id];
         });
 
